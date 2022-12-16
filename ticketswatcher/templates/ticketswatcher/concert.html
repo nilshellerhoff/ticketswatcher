@@ -1,0 +1,73 @@
+{% extends "ticketswatcher/base.html" %}
+
+{% block title %}{{ concert.title }}{% endblock %}
+{% block contenttitle %}{{ concert.title }}{% endblock %}
+
+{% block content %}
+<p>{{ concert.datestr }} / {{ concert.venue }}</p>
+
+{% if concert.url %}
+    <a class="btn btn-outline-secondary" href="{{ concert.url }}" role="button">More info</a>
+{% endif %}
+{% if concert.ticket_url %}
+    <a class="btn btn-outline-secondary" href="{{ concert.ticket_url }}" role="button">Buy ticket</a>
+{% endif %}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col">Price</th>
+            <th scope="col">Name</th>
+            <th scope="col">Available</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for ticket in tickets %}
+        <tr>
+            <td><div style="width: 18px; height: 18px; background-color: {{ ticket.color }};"></div></td>
+            <td>{{ ticket.category }}</td>
+            <td>{{ ticket.price }} €</td>
+            <td>{{ ticket.name }}</td>
+            <td>{{ ticket.available }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<div style="max-width: 400px">
+
+    <h3>Watch for tickets</h3>
+    <form action="{% url 'watch' concert.id %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="concert_id" value="{{ concert.id }}">
+
+        <div class="input-group mb-3">
+            <span class="input-group-text">@</span>
+            <input id="email" name="email" type="text" class="form-control" placeholder="your@email.com">
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text">€</span>
+            <input id="max_price" name="max_price" type="text" pattern="[0-9]*" class="form-control" placeholder="maximum price">
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text">€</span>
+            <input id="num_tickets" name="num_tickets" type="text" pattern="[0-9]*" class="form-control" placeholder="number of tickets">
+        </div>
+
+        {% for type in ticket_types %}
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" name="ticket_type_{{ type.reduction_type__id }}" id="ticket_type_{{ type.reduction_type__id}}">
+            <label class="form-check-label" for="ticket_type_{{ type.reduction_type__id }}">
+            {{ type.reduction_type__name }}
+            </label>
+        </div>
+        {% endfor %}
+
+        <input type="submit" class="btn btn-primary mb-3" value="Watch">
+    </form>
+</div>
+{% endblock %}
