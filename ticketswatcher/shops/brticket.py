@@ -4,6 +4,7 @@ import requests
 from math import ceil
 from bs4 import BeautifulSoup
 import datetime
+from typing import Union
 
 def getConcerts(numMax = None) -> list:
     '''Get all the listed concerts from br-ticket.de'''
@@ -12,7 +13,7 @@ def getConcerts(numMax = None) -> list:
 
     return concerts
 
-def _getConcerts(maxNum: int|None = None) -> list:
+def _getConcerts(maxNum: Union[int,None] = None) -> list:
     '''Get the api IDs of all the listed concerts from br-ticket.de'''
 
     concertsPerPage = 10
