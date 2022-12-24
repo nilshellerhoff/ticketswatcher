@@ -19,6 +19,7 @@ class Concert(models.Model):
         providers = {
             'brticket': 'BR Ticket',
             'mphil': 'Münchner Philharmoniker',
+            "brso": "BRSO",
         }
         return providers[self.provider]
 

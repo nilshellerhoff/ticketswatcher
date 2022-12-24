@@ -25,6 +25,8 @@ def getTickets(concert_id):
         return getTicketsBrticket(concert_id)
     elif concert.provider == 'mphil':
         return getTicketsMphil(concert_id)
+    elif concert.provider == 'brso':
+        return getTicketsBrso(concert_id)
     else:
         raise Exception('Unknown provider')
 
@@ -48,3 +50,13 @@ def getTicketsMphil(concert_id):
         return []
     
     return mphil.getFreeTickets(concert.ticketID)
+
+def getTicketsBrso(concert_id):
+    '''Get the details of a concert from br-so.de'''
+    
+    concert = Concert.objects.get(id=concert_id)
+    
+    if concert.ticket_url is None:
+        return []
+    
+    return brso.getFreeTickets(concert)

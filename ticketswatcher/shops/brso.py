@@ -5,6 +5,7 @@ from math import ceil
 from bs4 import BeautifulSoup
 import datetime
 from typing import Union
+from ..models import Concert
 
 def getConcerts():
     '''Get all the listed concerts from br-so.de'''
@@ -32,12 +33,12 @@ def _parsePage(soup: BeautifulSoup) -> list:
         c['provider'] = 'brso'
         c['title'] = concert.select_one('div.info h6').text.strip()
 
-        d = concert.select_one('div.date d').text.strip()
-        m = concert.select_one('div.date m').text.strip()
-        y = concert.select_one('div.date y').text.strip()
+        d = concert.select_one('div.date .t').text.strip()
+        m = concert.select_one('div.date .m').text.strip()
+        y = concert.select_one('div.date .y').text.strip()
 
         c['datestr'] = f"{d} {m} {y}"
-        c['datetime'] = "" # _parseDate(c['datestr'])
+        c['datetime'] = _parseDate(c['datestr'])
         
         c["ticketID"] = None
 
@@ -71,21 +72,49 @@ def _getFullUrl(url: str) -> str:
 def _parseDate(datestr: str) -> str:
     '''Parse the date of a concert from br-so.de and return it in the format YYYY-MM-DDT00:00:00'''
 
-    date = datestr.split(', ')[1]
-    time = datestr.split(', ')[2]
-    
-    day = int(date.split('.')[0])
-    month = int(date.split('.')[1])
-    year = int(date.split('.')[2]) + 2000
+    day = int(float(datestr.split(" ")[0]))
 
-    hour = int(time.split(':')[0])
-    minute = int(time.split(':')[1])
+    months_map = {
+        "Jan": 1,
+        "Feb": 2,
+        "Mär": 3,
+        "Apr": 4,
+        "Mai": 5,
+        "Jun": 6,
+        "Jul": 7,
+        "Aug": 8,
+        "Sep": 9,
+        "Okt": 10,
+        "Nov": 11,
+        "Dez": 12
+    }
+
+    month = months_map[datestr.split(" ")[1]]
+    year = int(datestr.split(" ")[2])
+
+    hour = 0
+    minute = 0
     seconds = 0
 
     # this works as long as the locale is set to german
     return datetime.datetime(year, month, day, hour, minute, seconds).isoformat()
 
-def getFreeTickets(concert_api_id):
+def getFreeTickets(concert: Concert):
+    '''Get the details of a concert from br-so.de'''
+
+    r = requests.get(concert.ticket_url)
+
+    if r.status_code != 200:
+        raise Exception('Error while fetching concert details from br-so.de')
+    else:
+        soup = BeautifulSoup(r.text, 'html.parser')
+        ticket_id = soup.select_one('ticket-button')['identifier']
+        concert.ticketID = ticket_id
+        concert.save()
+
+    return _getFreeTicketsApi(ticket_id)
+
+def _getFreeTicketsApi(concert_api_id):
     '''Get the details of a concert from br-ticket.de'''
     
     api_url = f"https://darjayf5vzuub.cloudfront.net/api/system/stbhl30h6k9a/seat-selection/booking-info/20221214135045/{concert_api_id}"
