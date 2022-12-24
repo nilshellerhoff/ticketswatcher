@@ -11,6 +11,7 @@ class TicketInline(admin.TabularInline):
 
 class ConcertAdmin(admin.ModelAdmin):
     inlines = [TicketInline]
+    search_fields = ['title']
 
 admin.site.register(Concert, ConcertAdmin)
 admin.site.register(Watcher)
