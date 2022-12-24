@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure-af=9me0#zr^phs(5u5^k=n$qdw67ov2&!in6$)*i=eo61kh27_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["ticketswatcher.forelleh.de"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "ticketswatcher.forelleh.de"
+]
 
 
 # Application definition
