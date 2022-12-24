@@ -1,4 +1,5 @@
 from django.db.models import Sum
+from django.core.mail import send_mail
 
 from . import shopsWrapper
 from .models import Concert, Ticket, TicketReductionType, Watcher
@@ -75,3 +76,13 @@ def checkWatchers():
             print(f"Found {tickets.aggregate(Sum('available'))} tickets for watcher {watcher.email}!")
         else:
             print(f"No tickets found for watcher {watcher.email}!")
+
+def sendTestMail():
+    """send a test email to the admin"""
+    send_mail(
+        'Ticketswatcher test email',
+        'This is a test email from ticketswatcher',
+        'ticketswatcher@ticketswatcher.forelleh.de',
+        ['nils.hellerhoff@gmail.com'],
+        fail_silently=False,
+    )

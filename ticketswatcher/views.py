@@ -71,3 +71,7 @@ def loadTickets(request, concert_id):
 def checkWatchers(request):
     actions.checkWatchers()
     return HttpResponse("Checked watchers")
+
+def sendTestMail(request):
+    actions.sendTestMail()
+    return HttpResponse("Sent test mail")
