@@ -77,7 +77,7 @@ def checkWatchers():
         else:
             print(f"No tickets found for watcher {watcher.email}!")
 
-def sendTestMail():
+def sendTestEmail():
     """send a test email to the admin"""
     send_mail(
         'Ticketswatcher test email',

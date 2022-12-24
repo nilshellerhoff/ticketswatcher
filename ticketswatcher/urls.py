@@ -25,4 +25,5 @@ urlpatterns = [
     path('loadConcerts', views.loadConcerts, name='loadConcerts'),
     path('loadTickets/<int:concert_id>', views.loadTickets, name='loadTickets'),
     path('checkWatchers', views.checkWatchers, name='checkWatchers'),
+    path('sendTestEmail', views.sendTestEmail, name='sendTestEmail')
 ]

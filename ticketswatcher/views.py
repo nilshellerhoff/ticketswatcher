@@ -72,6 +72,6 @@ def checkWatchers(request):
     actions.checkWatchers()
     return HttpResponse("Checked watchers")
 
-def sendTestMail(request):
-    actions.sendTestMail()
+def sendTestEmail(request):
+    actions.sendTestEmail()
     return HttpResponse("Sent test mail")
