@@ -43,11 +43,11 @@ def _parsePage(soup: BeautifulSoup) -> list:
         except:
             c['image'] = None
         
-        try: c['url'] = concert.select_one('div.concert__buttons a.opas-detail-link')['href']
+        try: c['url'] = _getFullUrl(concert.select_one('div.concert__buttons a.opas-detail-link')['href'])
         except: c['url'] = None
 
         try:
-            c['ticket_url'] = concert.select_one('ticket-button a')['href']
+            c['ticket_url'] = _getFullUrl(concert.select_one('ticket-button a')['href'])
         except:
             c['ticket_url'] = None
 
@@ -56,6 +56,15 @@ def _parsePage(soup: BeautifulSoup) -> list:
         concerts.append(c)
         
     return concerts
+
+def _getFullUrl(url: str) -> str:
+    '''Get the full url of a link on mphil.de'''
+
+    if url.startswith('/'):
+        return f'https://www.mphil.de{url}'
+    else:
+        return url
+        
 
 def _parseDate(datestr: str) -> str:
     '''Parse the date of a concert from mphil.de and return it in the format YYYY-MM-DDT00:00:00
