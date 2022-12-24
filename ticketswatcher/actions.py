@@ -67,6 +67,9 @@ def checkWatchers():
 
     for watcher in Watcher.objects.all():
         loadTickets(watcher.concert_id)
+
+        concert = Concert.objects.get(pk=watcher.concert_id)
+
         tickets = Ticket.objects.filter(
             concert_id=watcher.concert_id,
             price__lte=watcher.max_price,
@@ -74,6 +77,21 @@ def checkWatchers():
 
         if tickets.count() > watcher.num_tickets:
             print(f"Found {tickets.aggregate(Sum('available'))} tickets for watcher {watcher.email}!")
+
+            body_str = ""
+            body_str += f"Found {tickets.aggregate(Sum('available'))} tickets for concert {concert.title} on {concert.datestr}!"
+            body_str += "\n"
+            body_str += "\n".join([f"{ticket.category} {ticket.price}€ {ticket.name} {ticket.available}x" for ticket in tickets])
+            body_str += "\n"
+            body_str += f"Check out the tickets here: {concert.ticket_url}"
+
+            send_mail(
+                'Ticketswatcher found tickets',
+                body_str,
+                'ticketswatcher@ticketswatcher.forelleh.de',
+                [watcher.email],
+                fail_silently=False,
+            )
         else:
             print(f"No tickets found for watcher {watcher.email}!")
 
