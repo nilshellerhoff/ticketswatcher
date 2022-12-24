@@ -80,9 +80,9 @@ def checkWatchers():
 
             body_str = ""
             body_str += f"Found {tickets.aggregate(Sum('available')).available__sum} tickets for concert {concert.title} on {concert.datestr}!"
-            body_str += "\n"
+            body_str += "\n\n"
             body_str += "\n".join([f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if ticket.available > 0])
-            body_str += "\n"
+            body_str += "\n\n"
             body_str += f"Check out the tickets here: {concert.ticket_url}"
 
             send_mail(
