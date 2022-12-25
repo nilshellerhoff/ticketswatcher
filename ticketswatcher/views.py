@@ -10,6 +10,8 @@ from . import actions
 
 from datetime import datetime
 
+import uuid
+
 def index(request):
     concerts = Concert.objects.filter(datetime__gte = datetime.now()).order_by('datetime')
     # template = loader.get_template('ticketswatcher/index.html')
@@ -48,6 +50,8 @@ def watch(request, concert_id):
 
         if key == 'num_tickets':
             watcher.num_tickets = request.POST[key]
+
+    watcher.uuid = str(uuid.uuid1())
 
     watcher.save()
 
