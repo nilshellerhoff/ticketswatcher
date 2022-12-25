@@ -84,6 +84,9 @@ def checkWatchers():
             body_str += "\n".join([f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if ticket.available > 0])
             body_str += "\n\n"
             body_str += f"Check out the tickets here: {concert.ticket_url}"
+            body_str += "\n\n"
+            body_str += "This is an automated email from ticketswatcher. Remove this watcher by clicking on the link below.\n"
+            body_str += f"https://ticketswatcher.forelleh.de/deleteWatcher/{watcher.uuid}"
 
             send_mail(
                 'Ticketswatcher found tickets',

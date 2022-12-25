@@ -46,3 +46,7 @@ class Watcher(models.Model):
     max_price = models.IntegerField()
     num_tickets = models.IntegerField()
     types = models.ManyToManyField(TicketReductionType)
+    uuid = models.CharField(max_length=200, null=True)
+
+    def __str__(self):
+        return f"{self.email} - {self.concert.title}"

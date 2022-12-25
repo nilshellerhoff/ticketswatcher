@@ -75,3 +75,9 @@ def checkWatchers(request):
 def sendTestEmail(request):
     actions.sendTestEmail()
     return HttpResponse("Sent test mail")
+
+def deleteWatcher(request, uuid):
+    watcher = get_object_or_404(Watcher, uuid=uuid)
+    watcher.delete()
+
+    return redirect(reverse('index'))
