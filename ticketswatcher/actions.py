@@ -75,11 +75,13 @@ def checkWatchers():
             price__lte=watcher.max_price,
             reduction_type__in=watcher.types.all())
 
-        if tickets.count() > watcher.num_tickets:
-            print(f"Found {tickets.aggregate(Sum('available'))} tickets for watcher {watcher.email}!")
+        tickets_available = tickets.aggregate(Sum('available'))['available__sum']
+
+        if tickets_available > watcher.num_tickets:
+            print(f"Found {tickets_available} tickets for watcher {watcher.email}!")
 
             body_str = ""
-            body_str += f"Found {tickets.aggregate(Sum('available'))['available__sum']} tickets for concert {concert.title} on {concert.datestr}!"
+            body_str += f"Found {tickets_available} tickets for concert {concert.title} on {concert.datestr}!"
             body_str += "\n\n"
             body_str += "\n".join([f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if ticket.available > 0])
             body_str += "\n\n"
