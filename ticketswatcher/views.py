@@ -8,12 +8,12 @@ from .models import Concert, Ticket, TicketReductionType, Watcher
 
 from . import actions
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import uuid
 
 def index(request):
-    concerts = Concert.objects.filter(datetime__gte = datetime.now()).order_by('datetime')
+    concerts = Concert.objects.filter(datetime__gte = datetime.date(datetime.now())).order_by('datetime')
     # template = loader.get_template('ticketswatcher/index.html')
     # return HttpResponse(template.render({'concerts': concerts}, request))
     return render(request, 'ticketswatcher/index.html', {'concerts': concerts})
