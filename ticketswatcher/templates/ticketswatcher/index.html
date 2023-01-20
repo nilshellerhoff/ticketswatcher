@@ -5,14 +5,24 @@
 
 {% block content %}
 
+
 <!-- search field -->
 <div class="input-group mb-3">
     <span class="input-group-text"><i class="bi bi-search"></i></span>
     <input id="searchField" type="text" class="form-control" placeholder="Search...">
 </div>
 
+<div id="app">
+
+<!-- provider selector -->
+  <form>
+    <providerselector v-for="provider in providers" :provider="provider" :key="provider.id"></providerselector>
+  </form>
+
+<!-- concert list -->
 <ol id="concertList" class="list-group list-group-numbered">
-{% for concert in concerts %}
+  <concert v-for="concert in concertsFiltered" :concert="concert" :key="concert.pk"></concert>
+{% comment %} {% for concert in concerts %}
     <a href="/concert/{{ concert.pk}}" class="text-decoration-none">
         <li class="list-group-item d-flex justify-content-between align-items-start">
         <div class="ms-2 me-auto">
@@ -23,20 +33,111 @@
         <span class="badge bg-primary rounded-pill">14</span>
         </li>
     </a>
-{% endfor %}
+{% endfor %} {% endcomment %}
 </ol>
 
-<!-- search through the table -->
+<!-- end app -->
+</div>
+
+<!-- templates -->
+<template id="templateProviderSelector">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" :name="provider.id" :id="provider.id" v-model="provider.selected">
+    <label class="form-check-label" :for="provider.id">
+      [[ provider.name ]]
+    </label>
+</div>
+</template>
+
+<template id="templateConcertBlock">
+    <a :href="`/concert/${concert.pk}`" class="text-decoration-none">
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+            [[ concert.providerHR ]]
+            <div class="fw-bold">[[ concert.title ]]</div>
+            [[ concert.datestr ]]
+        </div>
+        <span class="badge bg-primary rounded-pill">14</span>
+        </li>
+    </a>
+</template>
+
 <script>
+  Vue.component('concert', {
+    delimiters : ['[[', ']]'],
+    template : '#templateConcertBlock',
+    props : ['concert'],
+});
+
+Vue.component('providerselector', {
+    delimiters : ['[[', ']]'],
+    template : '#templateProviderSelector',
+    props : ['provider'],
+})
+</script>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            providers: [
+              {
+                id: 1,
+                name: "BRSO",
+                selected: true,
+              },
+              {
+                id: 2,
+                name: "BR Ticket",
+                selected: true,
+              },
+              {
+                id: 3,
+                name: "Münchner Philharmoniker",
+                selected: true,
+              },
+            ],
+            concerts: [
+              {% for concert in concerts %}
+              {
+                pk: {{ concert.pk }},
+                providerHR: "{{ concert.providerHR }}",
+                title: "{{ concert.title }}",
+                datestr: "{{ concert.datestr }}",
+              },
+              {% endfor %}
+            ],
+            concertsFiltered: [],
+        },
+        methods: {
+          filterConcerts() {
+            this.concertsFiltered = this.concerts.filter((concert) => {
+              inSearch = concert.title.toLowerCase().includes(document.querySelector('#searchField').value.toLowerCase());
+              inProvider = this.providers.find(provider => provider.name == concert.providerHR).selected == true;
+              return inSearch && inProvider;
+            });
+          }
+        },
+        watch: {
+          providers: {
+            handler: function() {
+              this.filterConcerts();
+            },
+            deep: true,
+          },
+        },
+        mounted() {
+          this.filterConcerts();
+        },
+    });
+
     $(document).ready(function(){
       document.querySelector('#searchField').value = "";
       $("#searchField").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#concertList a").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
+        app.filterConcerts();
       });
     });
-</script> 
+
+</script>
 
 {% endblock %}
