@@ -2,9 +2,9 @@ from ticketswatcher.shops import brticket, mphil, brso
 from .models import Concert
 
 ENABLED_SHOPS = [
-    # "mphil",
+    "mphil",
     "brso",
-    # "brticket"
+    "brticket"
 ]
 
 def getConcerts():
