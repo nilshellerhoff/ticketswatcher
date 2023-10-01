@@ -10,22 +10,43 @@ from . import actions
 
 from datetime import datetime, timedelta
 
+import json
 import uuid
+from django.core import serializers
 
 def index(request):
     concerts = Concert.objects.filter(datetime__gte = datetime.date(datetime.now())).order_by('datetime')
+    concerts_json = serializers.serialize("json", concerts)
+    # concerts_json = [{"pk": c["pk"], **c["fields"]} for c in concerts_json]
     # template = loader.get_template('ticketswatcher/index.html')
     # return HttpResponse(template.render({'concerts': concerts}, request))
-    return render(request, 'ticketswatcher/index.html', {'concerts': concerts})
+    return render(request, 'ticketswatcher/index.html', {'concerts': concerts_json})
 
 def concert(request, concert_id):
+    watcher_id = request.GET.get("watcher_id")
+    watcher, watcher_status = None, None
+
+    if watcher_id:
+        try:
+            watcher_status = "success"
+            watcher = Watcher.objects.get(uuid=watcher_id)
+        except:
+            watcher_status = "error"
+
     concert = get_object_or_404(Concert, pk=concert_id)
 
     actions.loadTickets(concert_id)
     tickets = Ticket.objects.filter(concert_id=concert_id).order_by('sort', '-price')
     ticket_types = Ticket.objects.filter(concert_id=concert_id).values('reduction_type__name', 'reduction_type__id').distinct()
 
-    return render(request, 'ticketswatcher/concert.html', {'concert': concert, 'tickets': tickets, 'ticket_types': ticket_types})
+
+    return render(request, 'ticketswatcher/concert.html', {
+        'concert': concert,
+        'tickets': tickets,
+        'ticket_types': ticket_types,
+        'watcher_status': watcher_status,
+        'watcher': watcher
+    })
 
 def watch(request, concert_id):
 
@@ -46,10 +67,10 @@ def watch(request, concert_id):
             watcher.email = request.POST[key]
         
         if key == 'max_price':
-            watcher.max_price = request.POST[key]
+            watcher.max_price = request.POST[key] or -1
 
         if key == 'num_tickets':
-            watcher.num_tickets = request.POST[key]
+            watcher.num_tickets = request.POST[key] or -1
 
     watcher.uuid = str(uuid.uuid1())
 
@@ -60,7 +81,8 @@ def watch(request, concert_id):
 
     watcher.save()
 
-    return redirect(reverse('concert', args=(concert_id,)))
+    redirect_url = reverse('concert', args=(concert_id,)) + f"?watcher_id={watcher.uuid}"
+    return redirect(redirect_url)
 
 
 ### actions

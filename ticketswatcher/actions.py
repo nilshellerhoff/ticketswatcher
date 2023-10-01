@@ -70,14 +70,21 @@ def checkWatchers():
 
         concert = Concert.objects.get(pk=watcher.concert_id)
 
-        tickets = Ticket.objects.filter(
-            concert_id=watcher.concert_id,
-            price__lte=watcher.max_price,
-            reduction_type__in=watcher.types.all())
+        filters = {
+            "concert_id": watcher.concert_id,
+        }
 
-        tickets_available = tickets.aggregate(Sum('available'))['available__sum']
+        if watcher.max_price > 0:
+            filters["price__lte"] = watcher.max_price
 
-        if tickets_available > watcher.num_tickets:
+        if watcher.types.all():
+            filters["reduction_type__in"]: watcher.types.all()
+
+        tickets = Ticket.objects.filter(**filters)
+
+        tickets_available = tickets.aggregate(Sum('available'))['available__sum'] or 0
+
+        if tickets_available > 0 and tickets_available > watcher.num_tickets:
             print(f"Found {tickets_available} tickets for watcher {watcher.email}!")
 
             body_str = ""

@@ -4,140 +4,126 @@
 {% block contenttitle %}Concerts{% endblock %}
 
 {% block content %}
+    <div class="py-5">
+        <h2>Concerts</h2>
+    </div>
 
 
-<!-- search field -->
-<div class="input-group mb-3">
-    <span class="input-group-text"><i class="bi bi-search"></i></span>
-    <input id="searchField" type="text" class="form-control" placeholder="Search...">
-</div>
+    <!-- search field -->
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input id="searchField" type="text" class="form-control" placeholder="Search...">
+    </div>
 
-<div id="app">
+    <div id="app">
 
-<!-- provider selector -->
-  <form>
-    <providerselector v-for="provider in providers" :provider="provider" :key="provider.id"></providerselector>
-  </form>
+        <!-- provider selector -->
+        <form>
+            <providerselector v-for="provider in providers" :provider="provider" :key="provider.id"></providerselector>
+        </form>
 
-<!-- concert list -->
-<ol id="concertList" class="list-group list-group-numbered">
-  <concert v-for="concert in concertsFiltered" :concert="concert" :key="concert.pk"></concert>
-{% comment %} {% for concert in concerts %}
-    <a href="/concert/{{ concert.pk}}" class="text-decoration-none">
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-            {{ concert.providerHR }}
-            <div class="fw-bold">{{ concert.title }}</div>
-            {{ concert.datestr }}
+        <!-- concert list -->
+        <ol id="concertList" class="list-group list-group-numbered">
+            <concert v-for="concert in concertsFiltered" :concert="concert" :key="concert.pk"></concert>
+        </ol>
+
+        <!-- end app -->
+    </div>
+
+    <!-- templates -->
+    <template id="templateProviderSelector">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" :name="provider.id" :id="provider.id"
+                   v-model="provider.selected">
+            <label class="form-check-label" :for="provider.id">
+                [[ provider.title ]]
+            </label>
         </div>
-        <span class="badge bg-primary rounded-pill">14</span>
-        </li>
-    </a>
-{% endfor %} {% endcomment %}
-</ol>
+    </template>
 
-<!-- end app -->
-</div>
+    <template id="templateConcertBlock">
+        <a :href="`/concert/${concert.pk}`" class="text-decoration-none">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    [[ concert.fields.providerHR ]]
+                    <div class="fw-bold">[[ concert.fields.title ]]</div>
+                    [[ concert.fields.datestr ]] / [[ concert.fields.venue ]]
+                </div>
+                <span class="badge bg-primary rounded-pill">14</span>
+            </li>
+        </a>
+    </template>
 
-<!-- templates -->
-<template id="templateProviderSelector">
-  <div class="form-check">
-    <input class="form-check-input" type="checkbox" value="" :name="provider.id" :id="provider.id" v-model="provider.selected">
-    <label class="form-check-label" :for="provider.id">
-      [[ provider.name ]]
-    </label>
-</div>
-</template>
+    <script>
+        Vue.component('concert', {
+            delimiters: ['[[', ']]'],
+            template: '#templateConcertBlock',
+            props: ['concert'],
+        });
 
-<template id="templateConcertBlock">
-    <a :href="`/concert/${concert.pk}`" class="text-decoration-none">
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-            [[ concert.providerHR ]]
-            <div class="fw-bold">[[ concert.title ]]</div>
-            [[ concert.datestr ]]
-        </div>
-        <span class="badge bg-primary rounded-pill">14</span>
-        </li>
-    </a>
-</template>
+        Vue.component('providerselector', {
+            delimiters: ['[[', ']]'],
+            template: '#templateProviderSelector',
+            props: ['provider'],
+        })
+    </script>
 
-<script>
-  Vue.component('concert', {
-    delimiters : ['[[', ']]'],
-    template : '#templateConcertBlock',
-    props : ['concert'],
-});
-
-Vue.component('providerselector', {
-    delimiters : ['[[', ']]'],
-    template : '#templateProviderSelector',
-    props : ['provider'],
-})
-</script>
-
-<script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            providers: [
-              {
-                id: 1,
-                name: "BRSO",
-                selected: true,
-              },
-              {
-                id: 2,
-                name: "BR Ticket",
-                selected: true,
-              },
-              {
-                id: 3,
-                name: "Münchner Philharmoniker",
-                selected: true,
-              },
-            ],
-            concerts: [
-              {% for concert in concerts %}
-              {
-                pk: {{ concert.pk }},
-                providerHR: "{{ concert.providerHR }}",
-                title: "{{ concert.title }}",
-                datestr: "{{ concert.datestr }}",
-              },
-              {% endfor %}
-            ],
-            concertsFiltered: [],
-        },
-        methods: {
-          filterConcerts() {
-            this.concertsFiltered = this.concerts.filter((concert) => {
-              inSearch = concert.title.toLowerCase().includes(document.querySelector('#searchField').value.toLowerCase());
-              inProvider = this.providers.find(provider => provider.name == concert.providerHR).selected == true;
-              return inSearch && inProvider;
-            });
-          }
-        },
-        watch: {
-          providers: {
-            handler: function() {
-              this.filterConcerts();
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                providers: [
+                    {
+                        id: 1,
+                        title: "BRSO",
+                        name: "brso",
+                        selected: true,
+                    },
+                    {
+                        id: 3,
+                        title: "Münchner Philharmoniker",
+                        name: "mphil",
+                        selected: true,
+                    },
+                    {
+                        id: 2,
+                        name: "brticket",
+                        title: "BR Ticket",
+                        selected: false,
+                    },
+                ],
+                concerts: {{ concerts | safe }},
+                concertsFiltered: [],
             },
-            deep: true,
-          },
-        },
-        mounted() {
-          this.filterConcerts();
-        },
-    });
+            methods: {
+                filterConcerts() {
+                    this.concertsFiltered = this.concerts.filter((concert) => {
+                        inSearch = concert.fields.title.toLowerCase().includes(document.querySelector('#searchField').value.toLowerCase());
+                        inProvider = this.providers.find(provider => provider.name == concert.fields.provider).selected == true;
+                        return inSearch && inProvider;
+                    });
+                }
+            },
+            watch: {
+                providers: {
+                    handler: function () {
+                        this.filterConcerts();
+                    },
+                    deep: true,
+                },
+            },
+            mounted() {
+                this.filterConcerts();
+            },
+        });
 
-    $(document).ready(function(){
-      document.querySelector('#searchField').value = "";
-      $("#searchField").on("keyup", function() {
-        app.filterConcerts();
-      });
-    });
+        $(document).ready(function () {
+            document.querySelector('#searchField').value = "";
+            $("#searchField").on("keyup", function () {
+                app.filterConcerts();
+            });
+        });
 
-</script>
+    </script>
 
 {% endblock %}

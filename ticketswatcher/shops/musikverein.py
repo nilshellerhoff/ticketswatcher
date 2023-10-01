@@ -1,11 +1,9 @@
-## module for mphil.de
-
 import requests
 from bs4 import BeautifulSoup
 import datetime
 
 def getConcerts() -> list:
-    '''Get all the listed concerts from mphil.de'''
+    '''Get all the listed concerts from musikverein.at'''
 
     concerts = []
 
@@ -19,6 +17,7 @@ def getConcerts() -> list:
     soup = BeautifulSoup(r.text, 'html.parser')
 
     return _parsePage(soup)
+
 
 def _parsePage(soup: BeautifulSoup) -> list:
     '''Parse the html of a page of mphil.de'''
@@ -89,3 +88,40 @@ def _parseDate(datestr: str) -> str:
 
     # this works as long as the locale is set to german
     return datetime.datetime(year, month, day, hour, minute, seconds).isoformat()
+
+def getFreeTickets(concert_api_id):
+    '''Get the details of a concert from mphil.de'''
+    
+    api_url = f"https://darjayf5vzuub.cloudfront.net/api/system/s5fkpivanrzu/seat-selection/booking-info/20221215152315/{concert_api_id}"
+
+    r = requests.get(api_url)
+
+    if r.status_code != 200:
+        raise Exception('Error while fetching concert details from br-ticket.de')
+    
+    prices = []
+
+    for price in r.json()['prices']:
+        p = {}
+        p['identifier'] = price['identifier']
+        p['category'] = price['name']
+        p['sort'] = price['sortPosition']
+        p['name'] = price['priceName']
+        p['color'] = price['hexColor']
+        p['price'] = price['amount']
+        p['available'] = price['maxAllowedTickets']
+        prices.append(p)
+
+        if 'reductions' in price.keys():
+            for price2 in price['reductions']:
+                p2 = {}
+                p2['identifier'] = price2['identifier']
+                p2['category'] = price['name']
+                p2['sort'] = price['sortPosition']
+                p2['name'] = price2['name']
+                p2['color'] = price['hexColor']
+                p2['price'] = price2['amount']
+                p2['available'] = price2['maxAllowedTickets']
+                prices.append(p2)
+
+    return prices
