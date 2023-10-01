@@ -93,4 +93,5 @@ def _parseDate(datestr: str) -> str:
     return datetime.datetime(year, month, day, hour, minute, seconds).isoformat()
 
 def getFreeTickets(concert: Concert):
-    return utils_muenchenticket.get_free_tickets(concert.ticketID)
+    api_base_url = "https://darjayf5vzuub.cloudfront.net/api/system/s5fkpivanrzu/seat-selection/booking-info/20221215152315/"
+    return utils_muenchenticket.get_free_tickets(concert.ticketID, base_url=api_base_url)
