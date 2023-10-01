@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from typing import Union
 
-from . import common
+from . import utils_muenchenticket
 from ..models import Concert
 import html
 import re
@@ -148,7 +148,7 @@ def getConcerts() -> list:
 
 
 def getFreeTickets(concert: Concert):
-    return common.get_free_tickets(concert.ticketID)
+    return utils_muenchenticket.get_free_tickets(concert.ticketID)
 
 # def getFreeTickets(concert: Concert):
 #     '''Get the details of a concert from br-so.de'''

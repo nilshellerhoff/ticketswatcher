@@ -3,6 +3,8 @@
 import requests
 from bs4 import BeautifulSoup
 import datetime
+from . import utils_muenchenticket
+from ..models import Concert
 
 def getConcerts() -> list:
     '''Get all the listed concerts from mphil.de'''
@@ -89,3 +91,6 @@ def _parseDate(datestr: str) -> str:
 
     # this works as long as the locale is set to german
     return datetime.datetime(year, month, day, hour, minute, seconds).isoformat()
+
+def getFreeTickets(concert: Concert):
+    return utils_muenchenticket.get_free_tickets(concert.ticketID)
