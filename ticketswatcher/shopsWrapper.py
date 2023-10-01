@@ -57,8 +57,8 @@ def getTicketsMphil(concert_id):
     
     if concert.ticketID is None:
         return []
-    
-    return mphil.getFreeTickets(concert.ticketID)
+
+    return mphil.getFreeTickets(concert)
 
 def getTicketsBrso(concert_id):
     '''Get the details of a concert from br-so.de'''
