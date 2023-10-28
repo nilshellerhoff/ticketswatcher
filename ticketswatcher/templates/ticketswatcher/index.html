@@ -47,7 +47,10 @@
                 <div class="ms-2 me-auto">
                     [[ concert.fields.provider_title ]]
                     <div class="fw-bold">[[ concert.fields.title ]]</div>
-                    [[ concert.fields.datestr ]] / [[ concert.fields.venue ]]
+                    <span style="font-size: 14px">
+                    <i class="bi bi-clock-fill"></i> [[ concert.fields.datestr ]]<br>
+                    <i class="bi bi-geo-alt-fill"></i> [[ concert.fields.venue ]]
+                        </span>
                 </div>
                 <span class="badge bg-primary rounded-pill">14</span>
             </li>
@@ -97,8 +100,12 @@
             },
             methods: {
                 filterConcerts() {
+
                     this.concertsFiltered = this.concerts.filter((concert) => {
-                        inSearch = concert.fields.title.toLowerCase().includes(document.querySelector('#searchField').value.toLowerCase());
+                        const searchableString = concert.fields.title.toLowerCase() + concert.fields.details?.toLowerCase()
+                        const searchQuery = document.querySelector('#searchField').value.toLowerCase()
+                        const inSearch = searchableString.includes(searchQuery);
+
                         inProvider = this.providers.find(provider => provider.name == concert.fields.provider).selected == true;
                         return inSearch && inProvider;
                     });

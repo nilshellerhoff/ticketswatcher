@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from . import shopsWrapper
 from .models import Concert, Ticket, TicketReductionType, Watcher
 
+
 def loadConcerts():
     """Load concerts from the website into the DB"""
     concerts = shopsWrapper.getConcerts()
@@ -13,7 +14,8 @@ def loadConcerts():
             **{
                 'title': concert['title'],
                 'datestr': concert['datestr'],
-            }, defaults = {
+            }, defaults={
+                'details': concert.get('details'),
                 'provider': concert['provider'],
                 'datetime': concert['datetime'],
                 'ticketID': concert['ticketID'],
@@ -23,8 +25,9 @@ def loadConcerts():
                 'venue': concert['venue'],
             }
         )
-    
+
     return len(concerts)
+
 
 def loadTickets(concert_id: int):
     """Load tickets from the website into the DB"""
@@ -42,13 +45,12 @@ def loadTickets(concert_id: int):
     for ticket in tickets:
         TicketReductionType.objects.update_or_create(name=ticket['name'])
 
-
         # create new ticket entries
         Ticket.objects.update_or_create(
             **{
                 'concert_id': concert.id,
                 'identifier': ticket['identifier'],
-            }, defaults = {
+            }, defaults={
                 'sort': ticket['sort'],
                 'category': ticket['category'],
                 'price': ticket['price'],
@@ -59,8 +61,8 @@ def loadTickets(concert_id: int):
             }
         )
 
-    
     return len(tickets)
+
 
 def checkWatchers():
     """Load tickets and check if any tickets are available for watchers"""
@@ -90,7 +92,9 @@ def checkWatchers():
             body_str = ""
             body_str += f"Found {tickets_available} tickets for concert {concert.title} on {concert.datestr}!"
             body_str += "\n\n"
-            body_str += "\n".join([f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if ticket.available > 0])
+            body_str += "\n".join(
+                [f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if
+                 ticket.available > 0])
             body_str += "\n\n"
             body_str += f"Check out the tickets here: {concert.ticket_url}"
             body_str += "\n\n"
@@ -106,6 +110,7 @@ def checkWatchers():
             )
         else:
             print(f"No tickets found for watcher {watcher.email}!")
+
 
 def sendTestEmail():
     """send a test email to the admin"""

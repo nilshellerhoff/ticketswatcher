@@ -132,6 +132,7 @@ def getConcerts() -> list:
         concerts_list.append({
             "provider": "brso",
             "title": title,
+            "details": concert["subtitle"],
             "datestr": datestr,
             "datetime": datetime.strptime(concert["start"], CONCERTS_API_DATETIME_FORMAT),
             "image": concert["thumbnail_url"],

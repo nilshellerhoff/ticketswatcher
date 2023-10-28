@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from .utils import muenchenticket
 from .utils.beautifulsoup import try_get_attribute, try_get_text
-from .utils.formatting import oneline
+from .utils.formatting import oneline, remove_double_space
 from ..models import Concert
 
 def getConcerts() -> list:
@@ -41,8 +41,8 @@ def _parsePage(soup: BeautifulSoup) -> list:
         datetime_iso = concert.select_one('time.m-mphil-concertlist__date')["datetime"]
         c['datetime'] = datetime.strptime(datetime_iso, "%Y-%m-%d %H:%M")
 
-        c['worklist'] = try_get_text(concert, '.m-mphil-concertlist__work-list')
-        c['performers'] = try_get_text(concert, '.m-mphil-concertlist__person-list')
+        details = try_get_text(concert, '.m-mphil-concertlist__work-list')
+        c['details'] = remove_double_space(details).strip() if details else None
 
         c['image'] = try_get_attribute(concert, 'figure img', 'src')
 

@@ -24,11 +24,24 @@
             Something went wrong setting the watcher!
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-
     {% endif %}
 
-
-    <p>{{ concert.datestr }} / {{ concert.venue }}</p>
+    <table class="table">
+    <tbody>
+        <tr>
+            <td style="width: 50px"><i class="bi bi-clock-fill"></i></td>
+            <td>{{ concert.datestr }}</td>
+        </tr>
+            <tr>
+            <td><i class="bi bi-geo-alt-fill"></i></td>
+            <td>{{ concert.venue }}</td>
+        </tr>
+        <tr>
+            <td><i class="bi bi-list"></i></td>
+            <td>{{ concert.details | linebreaks }}</td>
+        </tr>
+    </tbody>
+    </table>
 
     {% if concert.url %}
         <a class="btn btn-outline-secondary" href="{{ concert.url }}" role="button">More info</a>

@@ -3,6 +3,7 @@ from django.db import models
 class Concert(models.Model):
     provider = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
+    details = models.CharField(max_length=2000, null=True)
     datestr = models.CharField(max_length=200)
     datetime = models.DateTimeField()
     ticketID = models.CharField(max_length=200, null=True)
