@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import Sum
 from django.core.mail import send_mail
 
@@ -67,7 +69,10 @@ def loadTickets(concert_id: int):
 def checkWatchers():
     """Load tickets and check if any tickets are available for watchers"""
 
-    for watcher in Watcher.objects.all():
+    # only future concerts
+    watchers_to_be_checked = Watcher.objects.filter(concert__datetime__gte=datetime.date(datetime.now()))
+
+    for watcher in watchers_to_be_checked:
         loadTickets(watcher.concert_id)
 
         concert = Concert.objects.get(pk=watcher.concert_id)
