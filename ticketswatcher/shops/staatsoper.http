@@ -1,0 +1,17 @@
+# curl 'https://www.staatsoper.de/spielplan/2023-10/calendar.ajax' --compressed -H 'User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0' -H 'Accept: */*' -H 'Accept-Language: en-US,en;q=0.5' -H 'Accept-Encoding: gzip, deflate, br' -H 'Referer: https://www.staatsoper.de/' -H 'Alt-Used: www.staatsoper.de' -H 'Connection: keep-alive' -H 'Cookie: a11y-zoom=0; a11y-contrast=0; calendar-date=2023-10; __cf_bm=6fHJlyBgNzxE4vygNgvQt1Qlm_u6WIr_VQcZoAswacQ-1696436923-0-AQLwBxELlKLkAkpnsQPvinKOCDNqpK58EoJsNDpYWVDzVILPIKqhVLFPWfYv3UjaIxkL6OCVSCgcuP2P51pVuh0=' -H 'Sec-Fetch-Dest: empty' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Site: same-origin' -H 'TE: trailers'
+GET https://www.staatsoper.de/spielplan/2023-10/calendar.ajax
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/117.0
+#Accept: */*
+#Accept-Language: en-US,en;q=0.5
+#Accept-Encoding: gzip, deflate, br
+#Referer: https://www.staatsoper.de/
+#Alt-Used: www.staatsoper.de
+#Connection: keep-alive
+Cookie: __cf_bm=6fHJlyBgNzxE4vygNgvQt1Qlm_u6WIr_VQcZoAswacQ-1696436923-0-AQLwBxELlKLkAkpnsQPvinKOCDNqpK58EoJsNDpYWVDzVILPIKqhVLFPWfYv3UjaIxkL6OCVSCgcuP2P51pVuh0=
+#Sec-Fetch-Dest: empty
+#Sec-Fetch-Mode: cors
+#Sec-Fetch-Site: same-origin
+#TE: trailers
+
+###
+
