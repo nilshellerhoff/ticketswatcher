@@ -73,48 +73,51 @@ def checkWatchers():
     watchers_to_be_checked = Watcher.objects.filter(concert__datetime__gte=datetime.date(datetime.now()))
 
     for watcher in watchers_to_be_checked:
-        loadTickets(watcher.concert_id)
+        try:
+            loadTickets(watcher.concert_id)
 
-        concert = Concert.objects.get(pk=watcher.concert_id)
+            concert = Concert.objects.get(pk=watcher.concert_id)
 
-        filters = {
-            "concert_id": watcher.concert_id,
-        }
+            filters = {
+                "concert_id": watcher.concert_id,
+            }
 
-        if watcher.max_price > 0:
-            filters["price__lte"] = watcher.max_price
+            if watcher.max_price > 0:
+                filters["price__lte"] = watcher.max_price
 
-        if watcher.types.all():
-            filters["reduction_type__in"]: watcher.types.all()
+            if watcher.types.all():
+                filters["reduction_type__in"]: watcher.types.all()
 
-        tickets = Ticket.objects.filter(**filters)
+            tickets = Ticket.objects.filter(**filters)
 
-        tickets_available = tickets.aggregate(Sum('available'))['available__sum'] or 0
+            tickets_available = tickets.aggregate(Sum('available'))['available__sum'] or 0
 
-        if tickets_available > 0 and tickets_available > watcher.num_tickets:
-            print(f"Found {tickets_available} tickets for watcher {watcher.email}!")
+            if tickets_available > 0 and tickets_available > watcher.num_tickets:
+                print(f"Found {tickets_available} tickets for watcher {watcher.email}!")
 
-            body_str = ""
-            body_str += f"Found {tickets_available} tickets for concert {concert.title} on {concert.datestr}!"
-            body_str += "\n\n"
-            body_str += "\n".join(
-                [f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if
-                 ticket.available > 0])
-            body_str += "\n\n"
-            body_str += f"Check out the tickets here: {concert.ticket_url}"
-            body_str += "\n\n"
-            body_str += "This is an automated email from ticketswatcher. Remove this watcher by clicking on the link below.\n"
-            body_str += f"http://ticketswatcher.forelleh.de/deleteWatcher/{watcher.uuid}"
+                body_str = ""
+                body_str += f"Found {tickets_available} tickets for concert {concert.title} on {concert.datestr}!"
+                body_str += "\n\n"
+                body_str += "\n".join(
+                    [f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if
+                     ticket.available > 0])
+                body_str += "\n\n"
+                body_str += f"Check out the tickets here: {concert.ticket_url}"
+                body_str += "\n\n"
+                body_str += "This is an automated email from ticketswatcher. Remove this watcher by clicking on the link below.\n"
+                body_str += f"http://ticketswatcher.forelleh.de/deleteWatcher/{watcher.uuid}"
 
-            send_mail(
-                'Ticketswatcher found tickets',
-                body_str,
-                'ticketswatcher@ticketswatcher.forelleh.de',
-                [watcher.email],
-                fail_silently=False,
-            )
-        else:
-            print(f"No tickets found for watcher {watcher.email}!")
+                send_mail(
+                    'Ticketswatcher found tickets',
+                    body_str,
+                    'ticketswatcher@ticketswatcher.forelleh.de',
+                    [watcher.email],
+                    fail_silently=False,
+                )
+            else:
+                print(f"No tickets found for watcher {watcher.email}!")
+        except:
+            print(f"error checking watcher {watcher.uuid}")
 
 
 def sendTestEmail():
