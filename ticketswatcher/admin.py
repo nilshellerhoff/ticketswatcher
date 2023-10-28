@@ -12,6 +12,7 @@ class TicketInline(admin.TabularInline):
 class ConcertAdmin(admin.ModelAdmin):
     inlines = [TicketInline]
     search_fields = ['title']
+    list_display = ['provider', 'datetime', 'datestr', 'title']
     list_filter = ["provider"]
 admin.site.register(Concert, ConcertAdmin)
 
