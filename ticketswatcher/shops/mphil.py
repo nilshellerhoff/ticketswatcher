@@ -2,8 +2,10 @@
 
 import requests
 from bs4 import BeautifulSoup
-import datetime
-from . import utils_muenchenticket
+from datetime import datetime
+from .utils import muenchenticket
+from .utils.beautifulsoup import try_get_attribute, try_get_text
+from .utils.formatting import oneline
 from ..models import Concert
 
 def getConcerts() -> list:
@@ -27,33 +29,31 @@ def _parsePage(soup: BeautifulSoup) -> list:
 
     concerts = []
 
-    for concert in soup.select('li.mp16_cal-listitem'):
+    concert_list = soup.select('.m-mphil-concertlist__item')
+
+    for concert in concert_list:
         c = {}
 
         c['provider'] = 'mphil'
-        c['title'] = concert.select_one('h2.thetitles').text.strip().replace("\n", " ").replace("\t", "")
-        c['datestr'] = concert.select_one('time.concert__date').text.strip()
-        c['datetime'] = _parseDate(c['datestr'])
+        c['title'] = oneline(concert.select_one('h2.m-mphil-concertlist__headline').text)
+        c['datestr'] = concert.select_one('time.m-mphil-concertlist__date').text.strip()
 
-        try:
-            c['ticketID'] = concert.select_one('ticket-button')['identifier']
-        except:
-            c['ticketID'] = None
-        
-        try:
-            c['image'] = concert.select_one('figure.card__image img')['src']
-        except:
-            c['image'] = None
-        
-        try: c['url'] = _getFullUrl(concert.select_one('div.concert__buttons a.opas-detail-link')['href'])
-        except: c['url'] = None
+        datetime_iso = concert.select_one('time.m-mphil-concertlist__date')["datetime"]
+        c['datetime'] = datetime.strptime(datetime_iso, "%Y-%m-%d %H:%M")
 
-        try:
-            c['ticket_url'] = _getFullUrl(concert.select_one('ticket-button a')['href'])
-        except:
-            c['ticket_url'] = None
+        c['worklist'] = try_get_text(concert, '.m-mphil-concertlist__work-list')
+        c['performers'] = try_get_text(concert, '.m-mphil-concertlist__person-list')
 
-        c['venue'] = concert.select_one('div.concert__venue').text.strip()
+        c['image'] = try_get_attribute(concert, 'figure img', 'src')
+
+        _url = try_get_attribute(concert, '.m-mphil-concertlist__detail-link', 'href')
+        c['url'] = _getFullUrl(_url) if _url else None
+
+        # doesn't exist right now, could be constructed though probably
+        c['ticket_url'] = None
+        c['ticketID'] = try_get_attribute(concert, 'ticket-button', 'identifier')
+
+        c['venue'] = try_get_text(concert, '.m-mphil-concertlist__venue')
         
         concerts.append(c)
         
@@ -90,8 +90,8 @@ def _parseDate(datestr: str) -> str:
     seconds = 0
 
     # this works as long as the locale is set to german
-    return datetime.datetime(year, month, day, hour, minute, seconds).isoformat()
+    return datetime(year, month, day, hour, minute, seconds).isoformat()
 
 def getFreeTickets(concert: Concert):
     api_base_url = "https://darjayf5vzuub.cloudfront.net/api/system/s5fkpivanrzu/seat-selection/booking-info/20221215152315"
-    return utils_muenchenticket.get_free_tickets(concert.ticketID, base_url=api_base_url)
+    return muenchenticket.get_free_tickets(concert.ticketID, base_url=api_base_url)

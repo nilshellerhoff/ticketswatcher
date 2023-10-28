@@ -1,12 +1,9 @@
 ## module for br-so.de
 
 import requests
-from math import ceil
-from bs4 import BeautifulSoup
 from datetime import datetime
-from typing import Union
 
-from . import utils_muenchenticket
+from .utils import muenchenticket
 from ..models import Concert
 import html
 import re
@@ -148,7 +145,7 @@ def getConcerts() -> list:
 
 
 def getFreeTickets(concert: Concert):
-    return utils_muenchenticket.get_free_tickets(concert.ticketID)
+    return muenchenticket.get_free_tickets(concert.ticketID)
 
 # def getFreeTickets(concert: Concert):
 #     '''Get the details of a concert from br-so.de'''

@@ -1,20 +1,23 @@
-from ticketswatcher.shops import brticket, mphil, brso
+from ticketswatcher.shops import brticket, mphil, brso, staatsoper
 from .models import Concert
 
 ENABLED_SHOPS = [
     "mphil",
     "brso",
-    "brticket"
+    "brticket",
+    # "staatsoper",
 ]
 
 def getConcerts():
     concerts = []
     if "brticket" in ENABLED_SHOPS:
-        concerts += getConcertsBrticket()
+        concerts += brticket.getConcerts()
     if "mphil" in ENABLED_SHOPS:
-        concerts += getConcertsMphil()
+        concerts += mphil.getConcerts()
     if "brso" in ENABLED_SHOPS:
-        concerts += getConcertsBrso()
+        concerts += brso.getConcerts()
+    if "staatsoper" in ENABLED_SHOPS:
+        concerts += staatsoper.getConcerts()
     return concerts
 
 def getConcertsBrticket():
@@ -25,6 +28,9 @@ def getConcertsMphil():
 
 def getConcertsBrso():
     return brso.getConcerts()
+
+def getConcertsStaatsoper():
+    return staatsoper.getConcerts()
 
 def getTickets(concert_id):
     '''Get the details of a concert from all providers'''
