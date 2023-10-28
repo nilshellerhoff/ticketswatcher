@@ -109,7 +109,8 @@ def checkWatchers(request):
     return HttpResponse("Checked watchers")
 
 def sendTestEmail(request):
-    actions.sendTestEmail()
+    email = request.GET.get("email") or "nils.hellerhoff@gmail.com"
+    actions.sendTestEmail(recipient=email)
     return HttpResponse("Sent test mail")
 
 def deleteWatcher(request, uuid):

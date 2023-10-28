@@ -120,12 +120,12 @@ def checkWatchers():
             print(f"error checking watcher {watcher.uuid}")
 
 
-def sendTestEmail():
+def sendTestEmail(recipient="nils.hellerhoff@gmail.com"):
     """send a test email to the admin"""
     send_mail(
         'Ticketswatcher test email',
         'This is a test email from ticketswatcher',
         'ticketswatcher@ticketswatcher.forelleh.de',
-        ['nils.hellerhoff@gmail.com'],
+        [recipient],
         fail_silently=False,
     )
