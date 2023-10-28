@@ -22,6 +22,8 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('concert/<int:concert_id>', views.concert, name='concert'),
     path('concert/<int:concert_id>/watch', views.watch, name='watch'),
+    path('watchers', views.watchers, name='watchers'),
+
     path('loadConcerts', views.loadConcerts, name='loadConcerts'),
     path('loadTickets/<int:concert_id>', views.loadTickets, name='loadTickets'),
     path('checkWatchers', views.checkWatchers, name='checkWatchers'),

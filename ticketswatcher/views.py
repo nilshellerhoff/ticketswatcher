@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
@@ -21,6 +21,16 @@ def index(request):
     # template = loader.get_template('ticketswatcher/index.html')
     # return HttpResponse(template.render({'concerts': concerts}, request))
     return render(request, 'ticketswatcher/index.html', {'concerts': concerts_json})
+
+
+def watchers(request):
+    email = request.GET.get("email")
+    watchers = Watcher.objects.filter(email=email)
+    context = {
+        'watchers' : watchers,
+        'email': email
+    }
+    return render(request, 'ticketswatcher/watchers.html', context)
 
 def concert(request, concert_id):
     watcher_id = request.GET.get("watcher_id")
@@ -106,4 +116,4 @@ def deleteWatcher(request, uuid):
     watcher = get_object_or_404(Watcher, uuid=uuid)
     watcher.delete()
 
-    return redirect(reverse('index'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

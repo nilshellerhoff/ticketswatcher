@@ -1,0 +1,72 @@
+{% extends "ticketswatcher/base.html" %}
+
+{% block title %}Watchers{% endblock %}
+
+{% block content %}
+    <div class="py-5">
+        <h2>Watchers</h2>
+    </div>
+
+    <form>
+        <div class="input-group mb-3">
+            <span class="input-group-text"><i class="bi bi-at"></i></span>
+            <input name="email" type="email" class="form-control" placeholder="email..." value="{{ email|default_if_none:"" }}">
+            <span class="input-group-append">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </span>
+        </div>
+    </form>
+
+    <div class="py-2">
+        {% if email %}
+            <h5><b>Watchers for {{ email }}:</b></h5>
+        {% else %}
+            Enter your email above!
+        {% endif %}
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Concert</th>
+            <th>Date & location</th>
+            <th>min tickets</th>
+            <th>max price</th>
+            <th>ticket categories</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for watcher in watchers %}
+            <tr>
+                <td><b> {{ watcher.concert.title }}</b></td>
+                <td>
+                    <i class="bi bi-clock-fill"></i> {{ watcher.concert.datestr }}<br>
+                    <i class="bi bi-geo-alt-fill"></i> {{ watcher.concert.venue }}
+                </td>
+                <td>
+                    <i class="bi bi-123"></i> {{ watcher.show_num }}<br>
+                </td>
+                <td>
+                    <i class="bi bi-currency-euro"></i> {{ watcher.show_price }}<br></td>
+                <td>
+                    <i class="bi bi-tag"></i> {{ watcher.show_types }}<br>
+                </td>
+                <td>
+                    <a href="/deleteWatcher/{{ watcher.uuid }}">
+                        <button class="btn btn-outline-secondary">
+                            <i class="bi bi-trash3-fill"></i> Delete
+                        </button>
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="6">No watchers for
+                {{ email }}
+                <td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

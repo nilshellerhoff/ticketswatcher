@@ -51,3 +51,12 @@ class Watcher(models.Model):
 
     def __str__(self):
         return f"{self.email} - {self.concert.title}"
+
+    def show_price(self):
+        return self.max_price if self.max_price > 0 else '--'
+
+    def show_num(self):
+        return self.num_tickets if self.num_tickets > 0 else '--'
+
+    def show_types(self):
+        return ",".join([ticket_type.name for ticket_type in self.types.all()])
