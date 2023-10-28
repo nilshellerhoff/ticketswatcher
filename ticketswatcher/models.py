@@ -59,4 +59,4 @@ class Watcher(models.Model):
         return self.num_tickets if self.num_tickets > 0 else '--'
 
     def show_types(self):
-        return ",".join([ticket_type.name for ticket_type in self.types.all()])
+        return ", ".join([ticket_type.name for ticket_type in self.types.all()])

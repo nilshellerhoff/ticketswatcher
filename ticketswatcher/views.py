@@ -25,7 +25,7 @@ def index(request):
 
 def watchers(request):
     email = request.GET.get("email")
-    watchers = Watcher.objects.filter(email=email)
+    watchers = Watcher.objects.filter(email=email, concert__datetime__gte=datetime.date(datetime.now())).order_by('concert__datetime')
     context = {
         'watchers' : watchers,
         'email': email
