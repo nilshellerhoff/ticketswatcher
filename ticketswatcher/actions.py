@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from . import shopsWrapper
 from .models import Concert, Ticket, TicketReductionType, Watcher
 
+FROM_EMAIL: str = 'ticketswatcher@forelleh.de'
 
 def loadConcerts():
     """Load concerts from the website into the DB"""
@@ -110,7 +111,7 @@ def checkWatchers():
                 send_mail(
                     'Ticketswatcher found tickets',
                     body_str,
-                    'ticketswatcher@ticketswatcher.forelleh.de',
+                    FROM_EMAIL,
                     [watcher.email],
                     fail_silently=False,
                 )
@@ -125,7 +126,7 @@ def sendTestEmail(recipient="nils.hellerhoff@gmail.com"):
     send_mail(
         'Ticketswatcher test email',
         'This is a test email from ticketswatcher',
-        'ticketswatcher@ticketswatcher.forelleh.de',
+        FROM_EMAIL,
         [recipient],
         fail_silently=False,
     )
