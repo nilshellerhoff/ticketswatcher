@@ -96,17 +96,23 @@ def checkWatchers():
             if tickets_available > 0 and tickets_available > watcher.num_tickets:
                 print(f"Found {tickets_available} tickets for watcher {watcher.email}!")
 
+                ticket_table_str = "\n".join(
+                    [f"{t.available}x {t.category} {t.price}€ {t.name}" for t in tickets if
+                     t.available > 0])
+
+                current_host = "http://ticketswatcher.forelleh.de"
+
                 body_str = ""
-                body_str += f"Found {tickets_available} tickets for concert {concert.title} on {concert.datestr}!"
-                body_str += "\n\n"
-                body_str += "\n".join(
-                    [f"{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}" for ticket in tickets if
-                     ticket.available > 0])
-                body_str += "\n\n"
-                body_str += f"Check out the tickets here: {concert.ticket_url}"
-                body_str += "\n\n"
-                body_str += "This is an automated email from ticketswatcher. Remove this watcher by clicking on the link below.\n"
-                body_str += f"http://ticketswatcher.forelleh.de/deleteWatcher/{watcher.uuid}"
+                body_str += f"""
+Found {tickets_available} tickets for concert {concert.title} on {concert.datestr}!
+                
+{ticket_table_str}
+
+Check out the tickets here: {current_host}/concert/{watcher.concert_id}
+
+This is an automated email from ticketswatcher.
+You can manage your watchers here: {current_host}/watchers?email={watcher.email} 
+or remove this watcher directly with the following url: {current_host}/deleteWatcher/{watcher.uuid}"""
 
                 send_mail(
                     'Ticketswatcher found tickets',
