@@ -1,0 +1,23 @@
+    <template id="templateConcertBlock">
+        <a :href="`/concert/${concert.pk}`" class="text-decoration-none">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    [[ concert.fields.provider_title ]]
+                    <div class="fw-bold">[[ concert.fields.title ]]</div>
+                    <span style="font-size: 14px">
+                    <i class="bi bi-clock-fill"></i> [[ concert.fields.datestr ]]<br>
+                    <i class="bi bi-geo-alt-fill"></i> [[ concert.fields.venue ]]
+                        </span>
+                </div>
+                <span class="badge bg-primary rounded-pill">14</span>
+            </li>
+        </a>
+    </template>
+
+    <script>
+        Vue.component('concert', {
+            delimiters: ['[[', ']]'],
+            template: '#templateConcertBlock',
+            props: ['concert'],
+        });
+    </script>

@@ -8,12 +8,12 @@
     </div>
 
     <div class="py-3">
-    <a href="/watchers">
-        <button class="btn btn-outline-secondary">
-            <i class="bi bi-eye-fill"></i> My watchers
-        </button>
-    </a>
-</div>
+        <a href="/watchers">
+            <button class="btn btn-outline-secondary">
+                <i class="bi bi-eye-fill"></i> My watchers
+            </button>
+        </a>
+    </div>
     <!-- search field -->
     <div class="input-group mb-3">
         <span class="input-group-text"><i class="bi bi-search"></i></span>
@@ -24,7 +24,8 @@
 
         <!-- provider selector -->
         <form>
-            <providerselector v-for="provider in providers" :provider="provider" :key="provider.id"></providerselector>
+            <provider-selector v-for="provider in providers" :provider="provider"
+                               :key="provider.id"></provider-selector>
         </form>
 
         <!-- concert list -->
@@ -35,49 +36,12 @@
         <!-- end app -->
     </div>
 
-    <!-- templates -->
-    <template id="templateProviderSelector">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" :name="provider.id" :id="provider.id"
-                   v-model="provider.selected">
-            <label class="form-check-label" :for="provider.id">
-                [[ provider.title ]]
-            </label>
-        </div>
-    </template>
-
-    <template id="templateConcertBlock">
-        <a :href="`/concert/${concert.pk}`" class="text-decoration-none">
-            <li class="list-group-item d-flex justify-content-between align-items-start">
-                <div class="ms-2 me-auto">
-                    [[ concert.fields.provider_title ]]
-                    <div class="fw-bold">[[ concert.fields.title ]]</div>
-                    <span style="font-size: 14px">
-                    <i class="bi bi-clock-fill"></i> [[ concert.fields.datestr ]]<br>
-                    <i class="bi bi-geo-alt-fill"></i> [[ concert.fields.venue ]]
-                        </span>
-                </div>
-                <span class="badge bg-primary rounded-pill">14</span>
-            </li>
-        </a>
-    </template>
+    <!-- components -->
+    {% include "ticketswatcher/vue_components/provider_selector.html" %}
+    {% include "ticketswatcher/vue_components/concert.html" %}
 
     <script>
-        Vue.component('concert', {
-            delimiters: ['[[', ']]'],
-            template: '#templateConcertBlock',
-            props: ['concert'],
-        });
-
-        Vue.component('providerselector', {
-            delimiters: ['[[', ']]'],
-            template: '#templateProviderSelector',
-            props: ['provider'],
-        })
-    </script>
-
-    <script>
-        var app = new Vue({
+        const app = new Vue({
             el: '#app',
             data: {
                 providers: [
@@ -105,7 +69,6 @@
             },
             methods: {
                 filterConcerts() {
-
                     this.concertsFiltered = this.concerts.filter((concert) => {
                         const searchableString = concert.fields.title.toLowerCase() + concert.fields.details?.toLowerCase()
                         const searchQuery = document.querySelector('#searchField').value.toLowerCase()
