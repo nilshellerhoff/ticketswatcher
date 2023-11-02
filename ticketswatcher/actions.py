@@ -40,31 +40,34 @@ def loadTickets(concert_id: int):
     except Concert.DoesNotExist:
         return 0
 
-    tickets = shopsWrapper.getTickets(concert.id)
+    try:
+        tickets = shopsWrapper.getTickets(concert.id)
 
-    # delete all ticket entries
-    Ticket.objects.filter(concert_id=concert.id).delete()
+        # delete all ticket entries
+        Ticket.objects.filter(concert_id=concert.id).delete()
 
-    for ticket in tickets:
-        TicketReductionType.objects.update_or_create(name=ticket['name'])
+        for ticket in tickets:
+            TicketReductionType.objects.update_or_create(name=ticket['name'])
 
-        # create new ticket entries
-        Ticket.objects.update_or_create(
-            **{
-                'concert_id': concert.id,
-                'identifier': ticket['identifier'],
-            }, defaults={
-                'sort': ticket['sort'],
-                'category': ticket['category'],
-                'price': ticket['price'],
-                'name': ticket['name'],
-                'color': ticket['color'],
-                'available': ticket['available'],
-                'reduction_type': TicketReductionType.objects.get(name=ticket['name']),
-            }
-        )
+            # create new ticket entries
+            Ticket.objects.update_or_create(
+                **{
+                    'concert_id': concert.id,
+                    'identifier': ticket['identifier'],
+                }, defaults={
+                    'sort': ticket['sort'],
+                    'category': ticket['category'],
+                    'price': ticket['price'],
+                    'name': ticket['name'],
+                    'color': ticket['color'],
+                    'available': ticket['available'],
+                    'reduction_type': TicketReductionType.objects.get(name=ticket['name']),
+                }
+            )
 
-    return len(tickets)
+        return len(tickets)
+    except:
+        return 0
 
 
 def checkWatchers():

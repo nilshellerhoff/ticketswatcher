@@ -9,7 +9,7 @@
                     <i class="bi bi-geo-alt-fill"></i> [[ concert.fields.venue ]]
                         </span>
                 </div>
-                <span class="badge bg-primary rounded-pill">14</span>
+                <span :class="`badge ${available_pill.color} rounded-pill`">[[ available_pill.label ]]</span>
             </li>
         </a>
     </template>
@@ -19,5 +19,14 @@
             delimiters: ['[[', ']]'],
             template: '#templateConcert',
             props: ['concert'],
+            computed: {
+                available_pill() {
+                    const avail = this.concert.fields.available_tickets
+                    if (avail >= 20) return { label: '20+', color: 'bg-success'}
+                    else if (avail > 0) return { label: avail, color: 'bg-warning'}
+                    else if (avail !== null) return { label: avail, color: 'bg-danger'}
+                    else return { label: '--', color: 'bg-secondary'}
+                }
+            }
         });
     </script>

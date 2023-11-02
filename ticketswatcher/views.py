@@ -17,9 +17,14 @@ from django.core import serializers
 def index(request):
     concerts = Concert.objects.filter(datetime__gte = datetime.date(datetime.now())).order_by('datetime')
     concerts_json = serializers.serialize("json", concerts)
-    # concerts_json = [{"pk": c["pk"], **c["fields"]} for c in concerts_json]
-    # template = loader.get_template('ticketswatcher/index.html')
-    # return HttpResponse(template.render({'concerts': concerts}, request))
+
+    # adding ticket info (yes this is stupid)
+    output = json.loads(concerts_json)
+    for entry in output:
+        concert = Concert.objects.get(id=entry["pk"])
+        entry["fields"]["available_tickets"] = concert.available_tickets
+    concerts_json = json.dumps(output)
+
     return render(request, 'ticketswatcher/index.html', {'concerts': concerts_json})
 
 
@@ -98,6 +103,12 @@ def watch(request, concert_id):
 ### actions
 def loadConcerts(request):
     num_concerts = actions.loadConcerts()
+
+    # load tickets for 100 first future concerts
+    first_100_future = Concert.objects.filter(datetime__gte = datetime.date(datetime.now())).order_by('datetime')[:100]
+    for concert in first_100_future:
+        actions.loadTickets(concert.id)
+
     return HttpResponse(f"Loaded {num_concerts} concerts")
 
 def loadTickets(request, concert_id):

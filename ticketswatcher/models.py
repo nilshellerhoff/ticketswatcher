@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import connection
 
 class Concert(models.Model):
     provider = models.CharField(max_length=200)
@@ -23,6 +24,26 @@ class Concert(models.Model):
             "brso": "BRSO",
         }
         return providers[self.provider]
+
+    @property
+    def available_tickets(self) -> int:
+        query = f"""
+SELECT
+    sum(available) as available
+FROM (
+    SELECT
+        max(available) as available
+    FROM ticketswatcher_ticket
+    WHERE concert_id = {self.id}
+    GROUP BY category
+)"""
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            row = cursor.fetchone()
+
+        return row[0]
+
 
 class Ticket(models.Model):
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
