@@ -32,7 +32,7 @@ def watchers(request):
     email = request.GET.get("email")
     watchers = Watcher.objects.filter(email=email, concert__datetime__gte=datetime.date(datetime.now())).order_by('concert__datetime')
     context = {
-        'watchers' : watchers,
+        'watchers': watchers,
         'email': email
     }
     return render(request, 'ticketswatcher/watchers.html', context)
@@ -50,7 +50,7 @@ def concert(request, concert_id):
 
     concert = get_object_or_404(Concert, pk=concert_id)
 
-    actions.loadTickets(concert_id)
+    actions.load_tickets(concert_id)
     tickets = Ticket.objects.filter(concert_id=concert_id).order_by('sort', '-price')
     ticket_types = Ticket.objects.filter(concert_id=concert_id).values('reduction_type__name', 'reduction_type__id').distinct()
 
@@ -107,16 +107,16 @@ def loadConcerts(request):
     # load tickets for 100 first future concerts
     first_100_future = Concert.objects.filter(datetime__gte = datetime.date(datetime.now())).order_by('datetime')[:100]
     for concert in first_100_future:
-        actions.loadTickets(concert.id)
+        actions.load_tickets(concert.id)
 
     return HttpResponse(f"Loaded {num_concerts} concerts")
 
 def loadTickets(request, concert_id):
-    num_tickets = actions.loadTickets(concert_id)
+    num_tickets = actions.load_tickets(concert_id)
     return HttpResponse(f"Loaded {num_tickets} tickets")
 
 def checkWatchers(request):
-    actions.checkWatchers()
+    actions.check_watchers()
     return HttpResponse("Checked watchers")
 
 def sendTestEmail(request):

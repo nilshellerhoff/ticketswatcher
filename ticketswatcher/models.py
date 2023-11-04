@@ -67,8 +67,9 @@ class Watcher(models.Model):
     concert = models.ForeignKey(Concert, on_delete=models.CASCADE)
     max_price = models.IntegerField()
     num_tickets = models.IntegerField()
-    types = models.ManyToManyField(TicketReductionType)
+    types = models.ManyToManyField(TicketReductionType, blank=True)
     uuid = models.CharField(max_length=200, null=True)
+    available = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.email} - {self.concert.title}"

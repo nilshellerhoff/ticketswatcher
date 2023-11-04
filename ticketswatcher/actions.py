@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from django.db.models import Sum
 from django.core.mail import send_mail
@@ -32,7 +33,7 @@ def loadConcerts():
     return len(concerts)
 
 
-def loadTickets(concert_id: int):
+def load_tickets(concert_id: int):
     """Load tickets from the website into the DB"""
 
     try:
@@ -70,7 +71,7 @@ def loadTickets(concert_id: int):
         return 0
 
 
-def checkWatchers():
+def check_watchers() -> None:
     """Load tickets and check if any tickets are available for watchers"""
 
     # only future concerts
@@ -78,37 +79,68 @@ def checkWatchers():
 
     for watcher in watchers_to_be_checked:
         try:
-            loadTickets(watcher.concert_id)
+            check_watcher(watcher)
+        except:
+            print(f"error checking watcher {watcher.uuid}")
 
-            concert = Concert.objects.get(pk=watcher.concert_id)
 
-            filters = {
-                "concert_id": watcher.concert_id,
-            }
+def check_watcher(watcher: Watcher) -> None:
 
-            if watcher.max_price > 0:
-                filters["price__lte"] = watcher.max_price
+    load_tickets(watcher.concert_id)
 
-            if watcher.types.all():
-                filters["reduction_type__in"]: watcher.types.all()
+    concert = Concert.objects.get(pk=watcher.concert_id)
 
-            tickets = Ticket.objects.filter(**filters)
+    filters = {
+        "concert_id": watcher.concert_id,
+    }
 
-            tickets_available = tickets.aggregate(Sum('available'))['available__sum'] or 0
+    if watcher.max_price > 0:
+        filters["price__lte"] = watcher.max_price
 
-            if tickets_available > 0 and tickets_available > watcher.num_tickets:
-                print(f"Found {tickets_available} tickets for watcher {watcher.email}!")
+    if watcher.types.all():
+        filters["reduction_type__in"]: watcher.types.all()
 
-                ticket_table_str = "\n".join(
-                    [f"{t.available}x {t.category} {t.price}€ {t.name}" for t in tickets if
-                     t.available > 0])
+    tickets = Ticket.objects.filter(**filters)
 
-                current_host = "http://ticketswatcher.forelleh.de"
+    tickets_available = tickets.aggregate(Sum('available'))['available__sum'] or 0
 
-                body_str = ""
-                body_str += f"""
+    old_availability = watcher.available
+
+    if tickets_available > 0 and tickets_available > watcher.num_tickets:
+        watcher.available = True
+
+        # we only send mail if the status has changed from unavailable to available
+        if not old_availability:
+            print(f"Found {tickets_available} tickets for watcher {watcher.email}, sending mail!")
+            send_ticket_mail(watcher, concert, tickets, tickets_available)
+        else:
+            print(f"Found {tickets_available} tickets for watcher {watcher.email}, not sending mail!")
+
+    else:
+        print(f"No tickets found for watcher {watcher.email}!")
+        watcher.available = False
+
+    watcher.save()
+
+
+def send_ticket_mail(watcher: Watcher, concert: Concert, tickets: List[Ticket], tickets_available: int):
+    """send the ticket available mail
+
+    Parameters:
+        watcher: the watcher object
+        concert: the concert object of the watcher
+        tickets: the available tickets for the watcher
+        tickets_available: the number of tickets available
+    """
+    current_host = "http://ticketswatcher.forelleh.de"
+
+    ticket_table_row = "{ticket.available}x {ticket.category} {ticket.price}€ {ticket.name}"
+
+    ticket_table_str = "\n".join([ticket_table_row.format(ticket=t) for t in tickets if t.available > 0])
+
+    body_str = f"""
 Found {tickets_available} tickets for concert {concert.title} on {concert.datestr}!
-                
+
 {ticket_table_str}
 
 Check out the tickets here: {current_host}/concert/{watcher.concert_id}
@@ -117,17 +149,13 @@ This is an automated email from ticketswatcher.
 You can manage your watchers here: {current_host}/watchers?email={watcher.email} 
 or remove this watcher directly with the following url: {current_host}/deleteWatcher/{watcher.uuid}"""
 
-                send_mail(
-                    'Ticketswatcher found tickets',
-                    body_str,
-                    FROM_EMAIL,
-                    [watcher.email],
-                    fail_silently=False,
-                )
-            else:
-                print(f"No tickets found for watcher {watcher.email}!")
-        except:
-            print(f"error checking watcher {watcher.uuid}")
+    send_mail(
+        'Ticketswatcher found tickets',
+        body_str,
+        FROM_EMAIL,
+        [watcher.email],
+        fail_silently=False,
+    )
 
 
 def sendTestEmail(recipient="nils.hellerhoff@gmail.com"):
