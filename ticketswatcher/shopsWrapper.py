@@ -10,26 +10,17 @@ ENABLED_SHOPS = [
 
 def getConcerts():
     concerts = []
-    if "brticket" in ENABLED_SHOPS:
-        print(f"loading concerts for brticket")
-        concerts_now = brticket.getConcerts()
-        print(f"{len(concerts_now)} concerts loaded")
-        concerts += concerts_now
-    if "mphil" in ENABLED_SHOPS:
-        print(f"loading concerts for mphil")
-        concerts_now = mphil.getConcerts()
-        print(f"{len(concerts_now)} concerts loaded")
-        concerts += concerts_now
-    if "brso" in ENABLED_SHOPS:
-        print(f"loading concerts for brso")
-        concerts_now = brso.getConcerts()
-        print(f"{len(concerts_now)} concerts loaded")
-        concerts += concerts_now
-    if "staatsoper" in ENABLED_SHOPS:
-        print(f"loading concerts for staatsoper")
-        concerts_now = staatsoper.getConcerts()
-        print(f"{len(concerts_now)} concerts loaded")
-        concerts += concerts_now
+
+    for shop in ENABLED_SHOPS:
+        concerts += load_concerts(shop)
+
+    return concerts
+
+
+def load_concerts(shopname):
+    print(f"loading concerts for {shopname}")
+    concerts = eval(f"{shopname}.getConcerts()")
+    print(f"{len(concerts)} concerts loaded")
     return concerts
 
 def getConcertsBrticket():
@@ -54,6 +45,8 @@ def getTickets(concert_id):
         return getTicketsMphil(concert_id)
     elif concert.provider == 'brso':
         return getTicketsBrso(concert_id)
+    elif concert.provider == 'staatsoper':
+        return getTicketsStaatsoper(concert_id)
     else:
         raise Exception('Unknown provider')
 
@@ -87,3 +80,12 @@ def getTicketsBrso(concert_id):
         return []
     
     return brso.getFreeTickets(concert)
+
+
+def getTicketsStaatsoper(concert_id: int):
+    concert = Concert.objects.get(id=concert_id)
+
+    if concert.ticket_url is None:
+        return []
+
+    return staatsoper.getFreeTickets(concert)

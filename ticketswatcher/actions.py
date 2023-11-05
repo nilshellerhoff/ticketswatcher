@@ -51,23 +51,40 @@ def load_tickets(concert_id: int):
             TicketReductionType.objects.update_or_create(name=ticket['name'])
 
             # create new ticket entries
-            Ticket.objects.update_or_create(
-                **{
-                    'concert_id': concert.id,
-                    'identifier': ticket['identifier'],
-                }, defaults={
-                    'sort': ticket['sort'],
-                    'category': ticket['category'],
-                    'price': ticket['price'],
-                    'name': ticket['name'],
-                    'color': ticket['color'],
-                    'available': ticket['available'],
-                    'reduction_type': TicketReductionType.objects.get(name=ticket['name']),
-                }
-            )
+            if ticket['identifier']:
+                Ticket.objects.update_or_create(
+                    **{
+                        'concert_id': concert.id,
+                        'identifier': ticket['identifier'],
+                    }, defaults={
+                        'sort': ticket['sort'],
+                        'category': ticket['category'],
+                        'price': ticket['price'],
+                        'name': ticket['name'],
+                        'color': ticket['color'],
+                        'available': ticket['available'],
+                        'reduction_type': TicketReductionType.objects.get(name=ticket['name']),
+                    }
+                )
+            else:
+                Ticket.objects.update_or_create(
+                    **{
+                        'concert_id': concert.id,
+                        'category': ticket['category'],
+                        'name': ticket['name'],
+                    }, defaults={
+                        'identifier': ticket['identifier'],
+                        'sort': ticket['sort'],
+                        'price': ticket['price'],
+                        'color': ticket['color'],
+                        'available': ticket['available'],
+                        'reduction_type': TicketReductionType.objects.get(name=ticket['name']),
+                    }
+                )
 
         return len(tickets)
-    except:
+    except Exception as e:
+        print(f"{str(e)}")
         return 0
 
 

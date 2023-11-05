@@ -1,6 +1,10 @@
+import re
+
 from bs4 import BeautifulSoup
 from datetime import datetime
 import requests
+
+from ticketswatcher.models import Concert
 from .utils.beautifulsoup import try_get_attribute, try_get_text
 
 COOKIES = {}
@@ -33,6 +37,48 @@ def getConcerts():
         concerts += parse_spielplan_page(url)
 
     return concerts
+
+
+def getFreeTickets(concert: Concert):
+    ticket_url = (concert.ticket_url)
+    ticketing_id = re.search(r"event=(\d*)", ticket_url).group(1)
+    bestplatz_url = f"https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?eventId={ticketing_id}"
+
+    r = requests.get(bestplatz_url)
+
+    if r.status_code != 200:
+        raise Exception('Error while fetching concert details')
+
+# 'https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?language=de&event=36349'
+# 'https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?language=de&event=36349'
+# 'https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?eventId=36349&upsellNo=0'
+
+    soup = BeautifulSoup(r.text, 'html.parser')
+    ticket_form = soup.find('form', id='selectionSubmit')
+
+    tickets = []
+    ticket_categories = ticket_form.find_all('div', id=lambda x: x and x.startswith('category_'))
+    for idx, ticket_category in enumerate(ticket_categories):
+        category, name = ticket_category.select_one('h2').text.split(":")
+        color_style = ticket_category.select_one('h2 .circle')["style"]
+        color = re.search(r"(#[0-9a-fA-F]{6})", color_style).group(1)
+
+        ticket_input = ticket_category.select_one('.evt-price-calculator-item input')
+        price = float(ticket_input['data-price'] or 0)
+        available = ticket_input['data-max']
+
+        tickets.append({
+            'identifier': '',
+            'category': category.strip(),
+            'sort': idx,
+            'name': name.strip(),
+            'color': color,
+            'price': price,
+            'available': available,
+        })
+
+    return tickets
+
 
 def parse_spielplan_page(url):
     concerts = []
