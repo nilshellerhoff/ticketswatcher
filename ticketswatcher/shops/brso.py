@@ -134,7 +134,7 @@ def getConcerts() -> list:
             "title": title,
             "details": concert["subtitle"],
             "datestr": datestr,
-            "datetime": datetime.strptime(concert["start"], CONCERTS_API_DATETIME_FORMAT),
+            "datetime": datetime.strptime(concert["start"], CONCERTS_API_DATETIME_FORMAT).replace(tzinfo=None),
             "image": concert["thumbnail_url"],
             "url": concert["url"],
             "ticketID": concert["shop_id"],
