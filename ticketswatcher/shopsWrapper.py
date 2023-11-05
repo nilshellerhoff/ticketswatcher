@@ -5,19 +5,31 @@ ENABLED_SHOPS = [
     "mphil",
     "brso",
     "brticket",
-    # "staatsoper",
+    "staatsoper",
 ]
 
 def getConcerts():
     concerts = []
     if "brticket" in ENABLED_SHOPS:
-        concerts += brticket.getConcerts()
+        print(f"loading concerts for brticket")
+        concerts_now = brticket.getConcerts()
+        print(f"{len(concerts_now)} concerts loaded")
+        concerts += concerts_now
     if "mphil" in ENABLED_SHOPS:
-        concerts += mphil.getConcerts()
+        print(f"loading concerts for mphil")
+        concerts_now = mphil.getConcerts()
+        print(f"{len(concerts_now)} concerts loaded")
+        concerts += concerts_now
     if "brso" in ENABLED_SHOPS:
-        concerts += brso.getConcerts()
+        print(f"loading concerts for brso")
+        concerts_now = brso.getConcerts()
+        print(f"{len(concerts_now)} concerts loaded")
+        concerts += concerts_now
     if "staatsoper" in ENABLED_SHOPS:
-        concerts += staatsoper.getConcerts()
+        print(f"loading concerts for staatsoper")
+        concerts_now = staatsoper.getConcerts()
+        print(f"{len(concerts_now)} concerts loaded")
+        concerts += concerts_now
     return concerts
 
 def getConcertsBrticket():

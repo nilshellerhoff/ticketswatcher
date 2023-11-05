@@ -44,26 +44,7 @@
         const app = new Vue({
             el: '#app',
             data: {
-                providers: [
-                    {
-                        id: 1,
-                        title: "BRSO",
-                        name: "brso",
-                        selected: true,
-                    },
-                    {
-                        id: 3,
-                        title: "Münchner Philharmoniker",
-                        name: "mphil",
-                        selected: true,
-                    },
-                    {
-                        id: 2,
-                        name: "brticket",
-                        title: "BR Ticket",
-                        selected: false,
-                    },
-                ],
+                providers: {{ providers | safe }},
                 concerts: {{ concerts | safe }},
                 concertsFiltered: [],
             },

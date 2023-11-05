@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.urls import reverse
 
+from .constants import PROVIDERS
 from .models import Concert, Ticket, TicketReductionType, Watcher
 
 from . import actions
@@ -24,8 +25,14 @@ def index(request):
         concert = Concert.objects.get(id=entry["pk"])
         entry["fields"]["available_tickets"] = concert.available_tickets
     concerts_json = json.dumps(output)
+    providers_json = json.dumps(PROVIDERS)
 
-    return render(request, 'ticketswatcher/index.html', {'concerts': concerts_json})
+    context = {
+        'concerts': concerts_json,
+        'providers': providers_json
+    }
+
+    return render(request, 'ticketswatcher/index.html', context)
 
 
 def watchers(request):
