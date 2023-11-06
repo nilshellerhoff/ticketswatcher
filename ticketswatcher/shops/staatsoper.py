@@ -59,7 +59,12 @@ def getFreeTickets(concert: Concert):
     tickets = []
     ticket_categories = ticket_form.find_all('div', id=lambda x: x and x.startswith('category_'))
     for idx, ticket_category in enumerate(ticket_categories):
-        category, name = ticket_category.select_one('h2').text.split(":")
+        category_name = ticket_category.select_one('h2').text.split(":")
+        if len(category_name) == 1:
+            category, name = category_name[0], category_name[0]
+        else:
+            category, name, *_ = category_name
+
         color_style = ticket_category.select_one('h2 .circle')["style"]
         color = re.search(r"(#[0-9a-fA-F]{6})", color_style).group(1)
 
