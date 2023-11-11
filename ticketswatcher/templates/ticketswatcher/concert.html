@@ -4,127 +4,139 @@
 
 {% block content %}
 
-    <div class="py-5">
-        <h2>
-            <a class="btn btn-outline-secondary" role="button" href="/">
-                <i class="bi bi-arrow-left"></i>Back
-            </a>
-            {{ concert.title }}
-        </h2>
-    </div>
-
-
-    {% if watcher_status == "success" %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            Watcher set for <strong>{{ watcher.email }}</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div id="app">
+        <div class="py-5">
+            <h2>
+                <a class="btn btn-outline-secondary" role="button" href="/">
+                    <i class="bi bi-arrow-left"></i>Back
+                </a>
+                {{ concert.title }}
+            </h2>
         </div>
-    {% elif watcher_status == "error" %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            Something went wrong setting the watcher!
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
 
-    <table class="table">
-    <tbody>
-        <tr>
-            <td style="width: 50px"><i class="bi bi-clock-fill"></i></td>
-            <td>{{ concert.datestr }}</td>
-        </tr>
-            <tr>
-            <td><i class="bi bi-geo-alt-fill"></i></td>
-            <td>{{ concert.venue }}</td>
-        </tr>
-        <tr>
-            <td><i class="bi bi-list"></i></td>
-            <td>{{ concert.details | linebreaks }}</td>
-        </tr>
-    </tbody>
-    </table>
 
-    {% if concert.url %}
-        <a class="btn btn-outline-secondary" href="{{ concert.url }}" role="button">More info</a>
-    {% endif %}
-    {% if concert.ticket_url %}
-        <a class="btn btn-outline-secondary" href="{{ concert.ticket_url }}" role="button">Buy ticket</a>
-    {% endif %}
+        {% if watcher_status == "success" %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Watcher set for <strong>{{ watcher.email }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% elif watcher_status == "error" %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                Something went wrong setting the watcher!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
 
-    {% if tickets %}
         <table class="table">
-            <thead>
-            <tr>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col">Price</th>
-                <th scope="col">Name</th>
-                <th scope="col">Available</th>
-            </tr>
-            </thead>
             <tbody>
-            {% for ticket in tickets %}
-                <tr>
-                    <td>
-                        <div style="width: 18px; height: 18px; background-color: {{ ticket.color }};"></div>
-                    </td>
-                    <td>{{ ticket.category }}</td>
-                    <td>{{ ticket.price }} €</td>
-                    <td>{{ ticket.name }}</td>
-                    <td>{{ ticket.available }}</td>
-                </tr>
-            {% endfor %}
+            <tr>
+                <td style="width: 50px"><i class="bi bi-clock-fill"></i></td>
+                <td>
+                    <formatted-date date="{{ concert.datetime | date:'Y-m-d H:i:s'}}"/>
+                </td>
+            </tr>
+            <tr>
+                <td><i class="bi bi-geo-alt-fill"></i></td>
+                <td>{{ concert.venue }}</td>
+            </tr>
+            <tr>
+                <td><i class="bi bi-list"></i></td>
+                <td>{{ concert.details | linebreaks }}</td>
+            </tr>
             </tbody>
         </table>
-    {% else %}
-        <br><br>
-        <h4>
-            No tickets available
-        </h4>
-        <p>
-            You can get notified when tickets become available by subscribing below.
-        </p>
-        <br>
-    {% endif %}
 
-    <div style="max-width: 400px">
-        <h3>Watch for tickets</h3>
-        <form action="{% url 'watch' concert.id %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="concert_id" value="{{ concert.id }}">
+        {% if concert.url %}
+            <a class="btn btn-outline-secondary" href="{{ concert.url }}" role="button">More info</a>
+        {% endif %}
+        {% if concert.ticket_url %}
+            <a class="btn btn-outline-secondary" href="{{ concert.ticket_url }}" role="button">Buy ticket</a>
+        {% endif %}
 
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="bi bi-at"></i></span>
-                <input id="email" name="email" type="text" class="form-control" placeholder="your@email.com">
-            </div>
+        {% if tickets %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Available</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ticket in tickets %}
+                    <tr>
+                        <td>
+                            <div style="width: 18px; height: 18px; background-color: {{ ticket.color }};"></div>
+                        </td>
+                        <td>{{ ticket.category }}</td>
+                        <td>{{ ticket.price }} €</td>
+                        <td>{{ ticket.name }}</td>
+                        <td>{{ ticket.available }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <br><br>
+            <h4>
+                No tickets available
+            </h4>
+            <p>
+                You can get notified when tickets become available by subscribing below.
+            </p>
+            <br>
+        {% endif %}
 
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
-                <input id="max_price" name="max_price" type="text" pattern="[0-9]*" class="form-control"
-                       placeholder="maximum price (empty for none)">
-            </div>
+        <div style="max-width: 400px">
+            <h3>Watch for tickets</h3>
+            <form action="{% url 'watch' concert.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="concert_id" value="{{ concert.id }}">
 
-            <div class="input-group mb-3">
-                <span class="input-group-text"><i class="bi bi-123"></i></span>
-                <input id="num_tickets" name="num_tickets" type="text" pattern="[0-9]*" class="form-control"
-                       placeholder="number of tickets (empty for none)">
-            </div>
-
-            {% if ticket_types %}
-                <h6><b>Ticket categories (check none for all):</b></h6>
-            {% endif %}
-
-            {% for type in ticket_types %}
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value=""
-                           name="ticket_type_{{ type.reduction_type__id }}"
-                           id="ticket_type_{{ type.reduction_type__id }}">
-                    <label class="form-check-label" for="ticket_type_{{ type.reduction_type__id }}">
-                        {{ type.reduction_type__name }}
-                    </label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-at"></i></span>
+                    <input id="email" name="email" type="text" class="form-control" placeholder="your@email.com">
                 </div>
-            {% endfor %}
 
-            <input type="submit" class="btn btn-primary mb-3" value="Watch">
-        </form>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
+                    <input id="max_price" name="max_price" type="text" pattern="[0-9]*" class="form-control"
+                           placeholder="maximum price (empty for none)">
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="bi bi-123"></i></span>
+                    <input id="num_tickets" name="num_tickets" type="text" pattern="[0-9]*" class="form-control"
+                           placeholder="number of tickets (empty for none)">
+                </div>
+
+                {% if ticket_types %}
+                    <h6><b>Ticket categories (check none for all):</b></h6>
+                {% endif %}
+
+                {% for type in ticket_types %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value=""
+                               name="ticket_type_{{ type.reduction_type__id }}"
+                               id="ticket_type_{{ type.reduction_type__id }}">
+                        <label class="form-check-label" for="ticket_type_{{ type.reduction_type__id }}">
+                            {{ type.reduction_type__name }}
+                        </label>
+                    </div>
+                {% endfor %}
+
+                <input type="submit" class="btn btn-primary mb-3" value="Watch">
+            </form>
+        </div>
     </div>
+
+    {% include "ticketswatcher/vue_components/formatted_date.vue" %}
+
+    <script>
+        const app = new Vue({
+            el: '#app',
+        });
+    </script>
 {% endblock %}
