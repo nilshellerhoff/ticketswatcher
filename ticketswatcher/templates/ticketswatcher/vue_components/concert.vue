@@ -4,12 +4,12 @@
       <div class="ms-2 me-auto">
         [[ concert.fields.provider_title ]]
         <div class="fw-bold">[[ concert.fields.title ]]</div>
-        <span style="font-size: 14px">
-                    <i class="bi bi-clock-fill"></i>
-                      <formatted-date :date="concert.fields.datetime"/>
-                    <br>
-                    <i class="bi bi-geo-alt-fill"></i> [[ concert.fields.venue ]]
-                </span>
+        <div style="font-size: 14px">
+          <i class="bi bi-clock-fill"></i>
+          <formatted-date :date="concert.fields.datetime"></formatted-date>
+          <br>
+          <i class="bi bi-geo-alt-fill"></i> [[ concert.fields.venue ]]
+        </div>
       </div>
       <span :class="`badge ${availablePill.color} rounded-pill`">[[ availablePill.label ]]</span>
     </li>
