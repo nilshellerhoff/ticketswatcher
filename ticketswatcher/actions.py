@@ -18,6 +18,7 @@ def loadConcerts():
             **{
                 'title': concert['title'],
                 'datestr': concert['datestr'],
+                'datetime': concert['datetime'],
             }, defaults={
                 'details': concert.get('details'),
                 'provider': concert['provider'],
