@@ -15,6 +15,7 @@
       item-title="title"
       chips
       label="Select providers"
+      prepend-inner-icon="mdi-store"
       multiple
       variant="solo"
   ></v-select>
