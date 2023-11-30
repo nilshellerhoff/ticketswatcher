@@ -14,11 +14,11 @@
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
-        <v-toolbar-title>[[ concert.fields.title ]]</v-toolbar-title>
+        <v-toolbar-title>[[ concertTitle ]]</v-toolbar-title>
       </v-toolbar>
 
       <div class="pa-6" style="height: 100%">
-        <iframe :src="`/concert/${concert.pk}`" style="width: 100%; height: 100%"></iframe>
+        <iframe :src="`/concert/${concertId}`" style="width: 100%; height: 100%"></iframe>
       </div>
     </v-card>
 
@@ -29,7 +29,7 @@
 const dialogConcert = {
   delimiters: ['[[', ']]'],
   template: '#templateDialogConcert',
-  props: ['show', 'concert'],
+  props: ['show', 'concertId', 'concertTitle'],
   data() {
     return {
       isFullscreen: window.innerWidth <= 600,

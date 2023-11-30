@@ -22,7 +22,7 @@
   <!-- concert list -->
   <ol id="concertList" class="list-group list-group-numbered">
     <concert-list-concert
-        @click="concertForDialog = concert; showConcertDialog = true"
+        @click="openConcert(concert)"
         v-for="concert in concertsFiltered"
         :concert="concert"
         :key="concert.pk">
@@ -31,7 +31,8 @@
 
   <dialog-concert
       :show="showConcertDialog"
-      :concert="concertForDialog"
+      :concert-id="dialogConcertId"
+      :concert-title="dialogConcertTitle"
       @concert-dialog-close="showConcertDialog = false"
   ></dialog-concert>
 </template>
@@ -45,7 +46,8 @@ const concertList = {
     selectedProviderNames: this.providers.filter(p => p.selected).map(p => p.name),
     concertsFiltered: [],
     searchQuery: null,
-    concertForDialog: null,
+    dialogConcertId: null,
+    dialogConcertTitle: "",
     showConcertDialog: false,
   }),
   methods: {
@@ -65,6 +67,11 @@ const concertList = {
       this.concerts.forEach(concert => {
         concert.fields.provider_title = this.providers.filter(provider => provider.name == concert.fields.provider)[0].title;
       })
+    },
+    openConcert(concert) {
+      this.dialogConcertId = concert.pk;
+      this.dialogConcertTitle = concert.fields.title;
+      this.showConcertDialog = true
     }
   },
   watch: {
