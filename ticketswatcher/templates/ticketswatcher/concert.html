@@ -1,29 +1,37 @@
-{% extends "ticketswatcher/base.html" %}
+{% extends "ticketswatcher/base_app.html" %}
 
 {% block title %}{{ concert.title }}{% endblock %}
 
-{% block content %}
+{% block body %}
 
-    <div id="app">
-        <div class="py-5">
-            <h2>
-                <a class="btn btn-outline-secondary" role="button" href="/">
-                    <i class="bi bi-arrow-left"></i>Back
-                </a>
-                {{ concert.title }}
-            </h2>
-        </div>
+    <div>
+        {#        <div class="py-5">#}
+        {#            <h2>#}
+        {#                <a class="btn btn-outline-secondary" role="button" href="/">#}
+        {#                    <i class="bi bi-arrow-left"></i>Back#}
+        {#                </a>#}
+        {#                {{ concert.title }}#}
+        {#            </h2>#}
+        {#        </div>#}
 
 
         {% if watcher_status == "success" %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show"
+                 role="alert">
                 Watcher set for <strong>{{ watcher.email }}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"></button>
             </div>
         {% elif watcher_status == "error" %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show"
+                 role="alert">
                 Something went wrong setting the watcher!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"></button>
             </div>
         {% endif %}
 
@@ -32,7 +40,7 @@
             <tr>
                 <td style="width: 50px"><i class="bi bi-clock-fill"></i></td>
                 <td>
-                    <formatted-date date="{{ concert.datetime | date:'Y-m-d H:i:s'}}"></formatted-date>
+                    <formatted-date date="{{ concert.datetime | date:'Y-m-d H:i:s' }}"></formatted-date>
                 </td>
             </tr>
             <tr>
@@ -47,12 +55,23 @@
         </table>
 
         {% if concert.url %}
-            <a class="btn btn-outline-secondary" href="{{ concert.url }}" role="button">More info</a>
+            <v-btn
+                    class="mx-2"
+                    href="{{ concert.url }}"
+                    target="_blank"
+                    color="primary"
+                    prepend-icon="mdi-information-outline"
+            >More info
+            </v-btn>
         {% endif %}
         {% if concert.ticket_url %}
-            <a class="btn btn-outline-secondary" href="{{ concert.ticket_url }}" role="button">Buy ticket</a>
+            <v-btn class="mx-2"
+                   href="{{ concert.ticket_url }}"
+                   target="_blank"
+                   color="primary"
+                   prepend-icon="mdi-ticket-outline">Buy ticket
+            </v-btn>
         {% endif %}
-
         {% if tickets %}
             <table class="table">
                 <thead>
@@ -91,24 +110,39 @@
 
         <div style="max-width: 400px">
             <h3>Watch for tickets</h3>
-            <form action="{% url 'watch' concert.id %}" method="post">
+            <form action="{% url 'watch' concert.id %}"
+                  method="post">
                 {% csrf_token %}
-                <input type="hidden" name="concert_id" value="{{ concert.id }}">
+                <input type="hidden"
+                       name="concert_id"
+                       value="{{ concert.id }}">
 
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="bi bi-at"></i></span>
-                    <input id="email" name="email" type="text" class="form-control" placeholder="your@email.com">
+                    <input id="email"
+                           name="email"
+                           type="text"
+                           class="form-control"
+                           placeholder="your@email.com">
                 </div>
 
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
-                    <input id="max_price" name="max_price" type="text" pattern="[0-9]*" class="form-control"
+                    <input id="max_price"
+                           name="max_price"
+                           type="text"
+                           pattern="[0-9]*"
+                           class="form-control"
                            placeholder="maximum price (empty for none)">
                 </div>
 
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="bi bi-123"></i></span>
-                    <input id="num_tickets" name="num_tickets" type="text" pattern="[0-9]*" class="form-control"
+                    <input id="num_tickets"
+                           name="num_tickets"
+                           type="text"
+                           pattern="[0-9]*"
+                           class="form-control"
                            placeholder="number of tickets (empty for none)">
                 </div>
 
@@ -118,25 +152,22 @@
 
                 {% for type in ticket_types %}
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value=""
+                        <input class="form-check-input"
+                               type="checkbox"
+                               value=""
                                name="ticket_type_{{ type.reduction_type__id }}"
                                id="ticket_type_{{ type.reduction_type__id }}">
-                        <label class="form-check-label" for="ticket_type_{{ type.reduction_type__id }}">
+                        <label class="form-check-label"
+                               for="ticket_type_{{ type.reduction_type__id }}">
                             {{ type.reduction_type__name }}
                         </label>
                     </div>
                 {% endfor %}
 
-                <input type="submit" class="btn btn-primary mb-3" value="Watch">
+                <input type="submit"
+                       class="btn btn-primary mb-3"
+                       value="Watch">
             </form>
         </div>
     </div>
-
-    {% include "ticketswatcher/vue_components/formatted_date.vue" %}
-
-    <script>
-        const app = new Vue({
-            el: '#app',
-        });
-    </script>
 {% endblock %}

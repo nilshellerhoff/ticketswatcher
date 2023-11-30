@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}My amazing site{% endblock %}</title>
+
+    <!-- bootstrap CSS -->
+    <link href="{% static 'lib/css/bootstrap@5.2.3.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'lib/css/bootstrap-icons@1.10.2.css' %}">
+
+    <!-- jquery -->
+    <script src="{% static 'lib/js/jquery@3.6.1.min.js' %}"></script>
+    <!-- lodash -->
+    <script src="{% static 'lib/js/lodash@4.17.21.min.js' %}"></script>
+
+
+    <!-- bootstrap JS -->
+    <script src="{% static 'lib/js/bootstrap@5.2.3.bundle.min.js' %}"></script>
+
+    <!-- vue -->
+    <script src="{% static 'lib/js/vue@3.3.9.global.js' %}"></script>
+
+    <!-- material icons -->
+    <link href="{% static 'lib/css/materialdesignicons@4.9.95.min.css' %}" rel="stylesheet"/>
+    <!-- vuetifjs labs -->
+    <link href="{% static 'lib/css/vuetify-labs@3.3.17.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'lib/js/vuetify-labs@3.3.17.min.js' %}"></script>
+
+</head>
+<body>
+<!-- declare window scoped variables -->
+{% block variables %}{% endblock %}
+
+<!-- app root -->
+<span id="app">
+        {% block body %}<h1>Hello, world!</h1>{% endblock %}
+    </span>
+
+<!-- create vue app and add vuetify -->
+<script>
+  const app = Vue.createApp();
+  const vuetify = Vuetify.createVuetify({
+    theme: {
+      themes: {
+        light: {
+          dark: false,
+          colors: {
+            primary: '#424242',
+            secondary: '#E0E0E0'
+          }
+        },
+      },
+    },
+  })
+  app.use(vuetify);
+</script>
+
+<!-- components (include app.component calls) -->
+{% include "ticketswatcher/vue_components/provider_selector.vue" %}
+{% include "ticketswatcher/vue_components/concert_list_concert.vue" %}
+{% include "ticketswatcher/vue_components/formatted_date.vue" %}
+{% include "ticketswatcher/vue_components/concert_list.vue" %}
+{% include "ticketswatcher/vue_components/app_bar.vue" %}
+{% include "ticketswatcher/vue_components/dialog_concert.vue" %}
+
+<script>
+  // mount global variables so they can be used to pass data from BE to FE
+  app.config.globalProperties.window = window;
+  app.mount('#app');
+</script>
+</body>
+</html>

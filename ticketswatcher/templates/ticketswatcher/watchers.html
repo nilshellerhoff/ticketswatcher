@@ -8,14 +8,25 @@
     </div>
 
     <form>
-        <div class="input-group mb-3">
-            <span class="input-group-text"><i class="bi bi-at"></i></span>
-            <input name="email" type="email" class="form-control" placeholder="email..."
-                   value="{{ email|default_if_none:"" }}">
-            <span class="input-group-append">
-                <button class="btn btn-primary" type="submit">Submit</button>
-            </span>
-        </div>
+        <v-row>
+            <v-text-field
+                    clearable
+                    label="Email"
+                    prepend-inner-icon="mdi-at"
+                    variant="solo"
+                    name="email"
+                    type="email"
+                    placeholder="{{ email | default_if_none:"" }}"
+            >
+                <template v-slot:append>
+                    <v-btn
+                            type="submit"
+                            color="primary"
+                    >Show
+                    </v-btn>
+                </template>
+            </v-text-field>
+        </v-row>
     </form>
 
     <div class="py-2">
@@ -54,11 +65,15 @@
                     <i class="bi bi-tag"></i> {{ watcher.show_types }}<br>
                 </td>
                 <td>
-                    <a href="/concert/{{ watcher.concert.id }}" class="btn btn-outline-secondary" role="button">
-                            <i class="bi bi-box-arrow-up-right"></i>&nbsp;Show
-                    </a>&nbsp;<a href="/deleteWatcher/{{ watcher.uuid }}" class="btn btn-outline-secondary" role="button">
-                            <i class="bi bi-trash3-fill"></i>&nbsp;Delete
-                    </a>
+                    <a href="/concert/{{ watcher.concert.id }}"
+                       class="btn btn-outline-secondary"
+                       role="button">
+                        <i class="bi bi-box-arrow-up-right"></i>&nbsp;Show
+                    </a>&nbsp;<a href="/deleteWatcher/{{ watcher.uuid }}"
+                                 class="btn btn-outline-secondary"
+                                 role="button">
+                    <i class="bi bi-trash3-fill"></i>&nbsp;Delete
+                </a>
                 </td>
             </tr>
         {% empty %}

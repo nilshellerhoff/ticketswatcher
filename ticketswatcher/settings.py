@@ -135,3 +135,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # set this to django.core.mail.backends.console.EmailBackend to test email locally
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 
+# xframe allow for same site
+X_FRAME_OPTIONS = "SAMEORIGIN"

@@ -2,91 +2,20 @@
 
 {% block title %}Concerts{% endblock %}
 
+{% block variables %}
+    <script>
+        var providers = {{ providers | safe }};
+        var concerts = {{ concerts | safe }};
+    </script>
+{% endblock %}
+
 {% block content %}
     <div class="py-5">
         <h2>Concerts</h2>
     </div>
 
-    <div class="py-3">
-        <a href="/watchers">
-            <button class="btn btn-outline-secondary">
-                <i class="bi bi-eye-fill"></i> My watchers
-            </button>
-        </a>
-    </div>
-    <!-- search field -->
-    <div class="input-group mb-3">
-        <span class="input-group-text"><i class="bi bi-search"></i></span>
-        <input id="searchField" type="text" class="form-control" placeholder="Search...">
-    </div>
-
-    <div id="app">
-
-        <!-- provider selector -->
-        <form>
-            <provider-selector v-for="provider in providers" :provider="provider"
-                               :key="provider.id"></provider-selector>
-        </form>
-
-        <!-- concert list -->
-        <ol id="concertList" class="list-group list-group-numbered">
-            <concert v-for="concert in concertsFiltered" :concert="concert" :key="concert.pk"></concert>
-        </ol>
-
-        <!-- end app -->
-    </div>
-
-    <!-- components -->
-    {% include "ticketswatcher/vue_components/provider_selector.vue" %}
-    {% include "ticketswatcher/vue_components/concert.vue" %}
-    {% include "ticketswatcher/vue_components/formatted_date.vue" %}
-
-    <script>
-        const app = new Vue({
-            el: '#app',
-            data: {
-                providers: {{ providers | safe }},
-                concerts: {{ concerts | safe }},
-                concertsFiltered: [],
-            },
-            methods: {
-                filterConcerts() {
-                    this.concertsFiltered = this.concerts.filter((concert) => {
-                        const searchableString = concert.fields.title.toLowerCase() + concert.fields.details?.toLowerCase()
-                        const searchQuery = document.querySelector('#searchField').value.toLowerCase()
-                        const inSearch = searchableString.includes(searchQuery);
-
-                        inProvider = this.providers.find(provider => provider.name == concert.fields.provider).selected == true;
-                        return inSearch && inProvider;
-                    });
-                },
-                setProviders() {
-                    this.concerts.forEach(concert => {
-                        concert.fields.provider_title = this.providers.filter(provider => provider.name == concert.fields.provider)[0].title;
-                    })
-                }
-            },
-            watch: {
-                providers: {
-                    handler: function () {
-                        this.filterConcerts();
-                    },
-                    deep: true,
-                },
-            },
-            mounted() {
-                this.filterConcerts();
-                this.setProviders();
-            },
-        });
-
-        $(document).ready(function () {
-            document.querySelector('#searchField').value = "";
-            $("#searchField").on("keyup", function () {
-                app.filterConcerts();
-            });
-        });
-
-    </script>
-
+    <concert-list
+            :providers="window.providers"
+            :concerts="window.concerts"
+    ></concert-list>
 {% endblock %}

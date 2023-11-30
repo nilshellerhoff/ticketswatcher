@@ -1,25 +1,25 @@
-<template id="templateConcert">
-  <a :href="`/concert/${concert.pk}`" class="text-decoration-none">
+<template id="templateConcertListConcert">
+  <span>
     <li class="list-group-item d-flex justify-content-between align-items-start">
       <div class="ms-2 me-auto">
         [[ concert.fields.provider_title ]]
         <div class="fw-bold">[[ concert.fields.title ]]</div>
         <div style="font-size: 14px">
-          <i class="bi bi-clock-fill"></i>
+          <i class="bi bi-clock-fill"></i>&nbsp;
           <formatted-date :date="concert.fields.datetime"></formatted-date>
           <br>
-          <i class="bi bi-geo-alt-fill"></i> [[ concert.fields.venue ]]
+          <i class="bi bi-geo-alt-fill"></i>&nbsp;[[ concert.fields.venue ]]
         </div>
       </div>
       <span :class="`badge ${availablePill.color} rounded-pill`">[[ availablePill.label ]]</span>
     </li>
-  </a>
+    </span>
 </template>
 
 <script>
-Vue.component('concert', {
+const concertListConcert = {
   delimiters: ['[[', ']]'],
-  template: '#templateConcert',
+  template: '#templateConcertListConcert',
   props: ['concert'],
   computed: {
     availablePill() {
@@ -30,5 +30,7 @@ Vue.component('concert', {
       else return {label: '--', color: 'bg-secondary'}
     },
   }
-});
+}
+
+app.component('concertListConcert', concertListConcert);
 </script>
