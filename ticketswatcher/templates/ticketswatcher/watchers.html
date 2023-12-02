@@ -17,7 +17,7 @@
         {% endif %}
     </div>
 
-    <table class="table">
+    <table is="vue:v-table">
         <thead>
         <tr>
             <th>Concert</th>
@@ -45,16 +45,16 @@
                     <i class="bi bi-tag"></i> {{ watcher.show_types }}<br>
                 </td>
                 <td>
-{#                    <a href="/concert/{{ watcher.concert.id }}"#}
-{#                       class="btn btn-outline-secondary"#}
-{#                       role="button">#}
-{#                        <i class="bi bi-box-arrow-up-right"></i>&nbsp;Show#}
-{#                    </a>#}
+                    {#                    <a href="/concert/{{ watcher.concert.id }}"#}
+                    {#                       class="btn btn-outline-secondary"#}
+                    {#                       role="button">#}
+                    {#                        <i class="bi bi-box-arrow-up-right"></i>&nbsp;Show#}
+                    {#                    </a>#}
                     <a href="/deleteWatcher/{{ watcher.uuid }}"
-                                 class="btn btn-outline-secondary"
-                                 role="button">
-                    <i class="bi bi-trash3-fill"></i>&nbsp;Delete
-                </a>
+                       class="btn btn-outline-secondary"
+                       role="button">
+                        <i class="bi bi-trash3-fill"></i>&nbsp;Delete
+                    </a>
                 </td>
             </tr>
         {% empty %}
