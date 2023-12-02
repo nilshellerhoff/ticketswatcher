@@ -146,23 +146,34 @@
                            placeholder="number of tickets (empty for none)">
                 </div>
 
+{#                {% if ticket_types %}#}
+{#                    <h6><b>Ticket categories (check none for all):</b></h6>#}
+{#                {% endif %}#}
+{##}
+{#                {% for type in ticket_types %}#}
+{#                    <div class="form-check">#}
+{#                        <input class="form-check-input"#}
+{#                               type="checkbox"#}
+{#                               value=""#}
+{#                               name="ticket_type_{{ type.reduction_type__id }}"#}
+{#                               id="ticket_type_{{ type.reduction_type__id }}">#}
+{#                        <label class="form-check-label"#}
+{#                               for="ticket_type_{{ type.reduction_type__id }}">#}
+{#                            {{ type.reduction_type__name }}#}
+{#                        </label>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+
                 {% if ticket_types %}
                     <h6><b>Ticket categories (check none for all):</b></h6>
-                {% endif %}
 
-                {% for type in ticket_types %}
-                    <div class="form-check">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               value=""
-                               name="ticket_type_{{ type.reduction_type__id }}"
-                               id="ticket_type_{{ type.reduction_type__id }}">
-                        <label class="form-check-label"
-                               for="ticket_type_{{ type.reduction_type__id }}">
-                            {{ type.reduction_type__name }}
-                        </label>
-                    </div>
-                {% endfor %}
+                    <v-select
+                        multiple
+                        chips
+                        :items='{{ ticket_types_json | safe }}'
+                        name="ticket_types"
+                    ></v-select>
+                {% endif %}
 
                 <input type="submit"
                        class="btn btn-primary mb-3"

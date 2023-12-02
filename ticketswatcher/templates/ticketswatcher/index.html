@@ -1,12 +1,11 @@
 {% extends "ticketswatcher/base.html" %}
+{% load variable %}
 
 {% block title %}Concerts{% endblock %}
 
 {% block variables %}
-    <script>
-        var providers = {{ providers | safe }};
-        var concerts = {{ concerts | safe }};
-    </script>
+    {{ providers | variable:"providers" }}
+    {{ concerts | variable:"concerts" }}
 {% endblock %}
 
 {% block content %}
