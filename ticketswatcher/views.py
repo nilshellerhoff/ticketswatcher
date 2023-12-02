@@ -60,18 +60,15 @@ def concert(request, concert_id):
 
     actions.load_tickets(concert_id)
     tickets = Ticket.objects.filter(concert_id=concert_id).order_by('sort', '-price')
-    ticket_types = Ticket.objects.filter(concert_id=concert_id).values('reduction_type__name',
-                                                                       'reduction_type__id').distinct()
-
-    ticket_types_dict = [{"title": t["reduction_type__name"], "value": t["reduction_type__id"]} for t in ticket_types]
-    ticket_types_json = json.dumps(ticket_types_dict)
-
+    ticket_reduction_types = Ticket.objects.filter(concert_id=concert_id).values('reduction_type__name',
+                                                                                 'reduction_type__id').distinct()
+    ticket_categories = Ticket.objects.filter(concert_id=concert_id).values('category').distinct()
 
     return render(request, 'ticketswatcher/concert.html', {
         'concert': concert,
         'tickets': tickets,
-        'ticket_types': ticket_types,
-        'ticket_types_json': ticket_types_json,
+        'ticket_reduction_types': ticket_reduction_types,
+        'ticket_categories': ticket_categories,
         'watcher_status': watcher_status,
         'watcher': watcher
     })
@@ -84,8 +81,8 @@ def watch(request, concert_id):
 
     watcher.concert = concert
 
-    ticket_types = request.POST.get("ticket_types").split(", ")
-    ticket_types = [int(t) for t in ticket_types if t.isnumeric()]
+    ticket_reduction_types = request.POST.get("ticket_reduction_types").split(", ")
+    ticket_reduction_types = [int(t) for t in ticket_reduction_types if t.isnumeric()]
 
     watcher.email = request.POST.get("email")
     watcher.max_price = request.POST.get("max_price") or -1
@@ -109,8 +106,8 @@ def watch(request, concert_id):
 
     watcher.save()
 
-    for ticket_type_id in ticket_types:
-        watcher.types.add(TicketReductionType.objects.get(pk=ticket_type_id))
+    for reduction_type_id in ticket_reduction_types:
+        watcher.types.add(TicketReductionType.objects.get(pk=reduction_type_id))
 
     watcher.save()
 

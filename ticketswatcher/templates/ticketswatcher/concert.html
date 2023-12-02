@@ -1,6 +1,12 @@
 {% extends "ticketswatcher/base_app.html" %}
+{% load variable %}
 
 {% block title %}{{ concert.title }}{% endblock %}
+
+{% block variables %}
+{{ ticket_reduction_types | variable:"ticketReductionTypes" }}
+{{ ticket_categories | variable:"ticketCategories" }}
+{% endblock %}
 
 {% block body %}
 
@@ -117,67 +123,58 @@
                        name="concert_id"
                        value="{{ concert.id }}">
 
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="bi bi-at"></i></span>
-                    <input id="email"
-                           name="email"
-                           type="text"
-                           class="form-control"
-                           placeholder="your@email.com">
-                </div>
+                <v-text-field
+                    prepend-inner-icon="mdi-at"
+                    name="email"
+                    type="text"
+                    label="Email address"
+                    placeholder="your@email.com"
+                ></v-text-field>
 
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
-                    <input id="max_price"
-                           name="max_price"
-                           type="text"
-                           pattern="[0-9]*"
-                           class="form-control"
-                           placeholder="maximum price (empty for none)">
-                </div>
+                <v-text-field
+                    prepend-inner-icon="mdi-currency-eur"
+                    name="max_price"
+                    type="number"
+                    label="maximum price"
+                    placeholder="(empty for none)"
+                ></v-text-field>
 
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="bi bi-123"></i></span>
-                    <input id="num_tickets"
-                           name="num_tickets"
-                           type="text"
-                           pattern="[0-9]*"
-                           class="form-control"
-                           placeholder="number of tickets (empty for none)">
-                </div>
+                <v-text-field
+                    prepend-inner-icon="mdi-numeric"
+                    name="num_tickets"
+                    type="number"
+                    label="number of tickets"
+                    placeholder="(empty for none)"
+                ></v-text-field>
 
-{#                {% if ticket_types %}#}
+{#                {% if ticket_categories %}#}
 {#                    <h6><b>Ticket categories (check none for all):</b></h6>#}
-{#                {% endif %}#}
 {##}
-{#                {% for type in ticket_types %}#}
-{#                    <div class="form-check">#}
-{#                        <input class="form-check-input"#}
-{#                               type="checkbox"#}
-{#                               value=""#}
-{#                               name="ticket_type_{{ type.reduction_type__id }}"#}
-{#                               id="ticket_type_{{ type.reduction_type__id }}">#}
-{#                        <label class="form-check-label"#}
-{#                               for="ticket_type_{{ type.reduction_type__id }}">#}
-{#                            {{ type.reduction_type__name }}#}
-{#                        </label>#}
-{#                    </div>#}
-{#                {% endfor %}#}
+{#                    <v-select#}
+{#                        multiple#}
+{#                        chips#}
+{#                        :items="window.ticketCategories"#}
+{#                        item-title="category"#}
+{#                        item-value="category"#}
+{#                        name="ticket_categories"#}
+{#                        placeholder="(all selected)"#}
+{#                    ></v-select>#}
+{#                {% endif %}#}
 
-                {% if ticket_types %}
-                    <h6><b>Ticket categories (check none for all):</b></h6>
-
+                {% if ticket_reduction_types %}
                     <v-select
                         multiple
                         chips
-                        :items='{{ ticket_types_json | safe }}'
-                        name="ticket_types"
+                        :items="window.ticketReductionTypes"
+                        item-title="reduction_type__name"
+                        item-value="reduction_type__id"
+                        name="ticket_reduction_types"
+                        label="Ticket reductions"
+                        placeholder="(all selected)"
                     ></v-select>
                 {% endif %}
 
-                <input type="submit"
-                       class="btn btn-primary mb-3"
-                       value="Watch">
+                <v-btn type="submit" color="primary">Watch</v-btn>
             </form>
         </div>
     </div>
