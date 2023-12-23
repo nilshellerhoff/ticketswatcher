@@ -43,8 +43,17 @@ def getFreeTickets(concert: Concert):
     ticket_url = (concert.ticket_url)
     ticketing_id = re.search(r"event=(\d*)", ticket_url).group(1)
     bestplatz_url = f"https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?eventId={ticketing_id}"
+    seatmap_url = f"https://tickets.staatstheater.bayern/bso.webshop/webticket/seatmap?eventId={ticketing_id}"
 
-    r = requests.get(bestplatz_url)
+    # 'https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?eventId={ticketing_id}'
+    # 'https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?eventId=36694'
+    # 'https://tickets.staatstheater.bayern/bso.webshop/webticket/bestseatselect?eventId=36695&upsellNo=0'
+
+    # We need to get the seatmap page first, because it sets some cookies
+    session = requests.Session()
+    session.get(seatmap_url)
+
+    r = session.get(bestplatz_url)
 
     if r.status_code != 200:
         raise Exception('Error while fetching concert details')
