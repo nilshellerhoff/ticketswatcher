@@ -6,7 +6,7 @@ bs4==0.0.1
 certifi==2022.12.7
 charset-normalizer==2.1.1
 decorator==5.1.1
-Django==4.1.4
+Django==3.2.23
 executing==1.2.0
 idna==3.4
 ipython==8.7.0
@@ -20,6 +20,7 @@ ptyprocess==0.7.0
 pure-eval==0.2.2
 Pygments==2.13.0
 python-dotenv==1.0.0
+pytz==2023.3.post1
 requests==2.28.1
 six==1.16.0
 soupsieve==2.3.2.post1
