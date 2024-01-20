@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from . import views
+from . import views, management_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,3 +30,5 @@ urlpatterns = [
     path('sendTestEmail', views.sendTestEmail, name='sendTestEmail'),
     path('deleteWatcher/<str:uuid>', views.deleteWatcher, name='deleteWatcher')
 ]
+
+urlpatterns += management_urls.urlpatterns
