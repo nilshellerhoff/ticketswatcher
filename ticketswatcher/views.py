@@ -67,6 +67,7 @@ def concert(request, concert_id):
     return render(request, 'ticketswatcher/concert.html', {
         'concert': concert,
         'concert_details': "\n".join([line.strip() for line in concert.details.split("\n")]),
+        'provider': next(filter(lambda p: p['name'] == concert.provider, PROVIDERS))['title'],
         'tickets': tickets,
         'ticket_reduction_types': ticket_reduction_types,
         'ticket_categories': ticket_categories,
