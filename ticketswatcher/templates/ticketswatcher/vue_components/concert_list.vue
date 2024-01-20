@@ -20,6 +20,13 @@
       variant="solo"
   ></v-select>
 
+  <v-switch
+    v-model="showOnlyFree"
+    color="primary"
+    label="Show only concerts with tickets available"
+    @update:model-value="filterConcertsDebounced"
+  ></v-switch>
+
   <!-- concert list -->
   <ol id="concertList" class="list-group list-group-numbered">
     <concert-list-concert
@@ -50,16 +57,26 @@ const concertList = {
     dialogConcertId: null,
     dialogConcertTitle: "",
     showConcertDialog: false,
+    showOnlyFree: false,
   }),
   methods: {
     filterConcerts() {
-      this.concertsFiltered = this.concerts.filter((concert) => {
+      let concertsFiltered = this.concerts;
+      // filter by free
+      if (this.showOnlyFree) {
+        concertsFiltered = concertsFiltered.filter((concert) => {
+          return concert.fields.available_tickets > 0;
+        });
+      }
+
+      concertsFiltered = concertsFiltered.filter((concert) => {
         const searchableString = concert.fields.title.toLowerCase() + concert.fields.details?.toLowerCase()
         const inSearch = searchableString.includes(this.searchQuery ?? '');
 
         const inProvider = this.selectedProviderNames.includes(concert.fields.provider);
         return inSearch && inProvider;
       });
+      this.concertsFiltered = concertsFiltered;
     },
     filterConcertsDebounced: _.debounce(function () {
       this.filterConcerts()

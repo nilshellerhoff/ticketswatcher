@@ -122,8 +122,8 @@ def loadConcerts(request):
     num_concerts = actions.loadConcerts()
 
     # load tickets for 100 first future concerts
-    first_100_future = Concert.objects.filter(datetime__gte=datetime.date(datetime.now())).order_by('datetime')[:100]
-    for concert in first_100_future:
+    first_500_future = Concert.objects.filter(datetime__gte=datetime.date(datetime.now())).order_by('datetime')[:500]
+    for concert in first_500_future:
         actions.load_tickets(concert.id)
 
     return HttpResponse(f"Loaded {num_concerts} concerts")
