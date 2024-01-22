@@ -47,39 +47,39 @@ def basicauth(view, realm=""):
 
 @basicauth
 def migrate_view(request):
-    return HttpResponse(migrate())
+    return HttpResponse(migrate(), content_type="text/plain")
 
 
 def migrate():
     out_str = ""
-    out_str += str(datetime.now()) + " running migrate<br>"
+    out_str += str(datetime.now()) + " running migrate\n"
     django.core.management.execute_from_command_line(['manage.py', 'migrate'])
-    out_str += str(datetime.now()) + " migrate finished<br>"
+    out_str += str(datetime.now()) + " migrate finished\n"
     return out_str
 
 
 @basicauth
 def collectstatic_view(request):
-    return HttpResponse(collectstatic())
+    return HttpResponse(collectstatic(), content_type="text/plain")
 
 
 def collectstatic():
     out_str = ""
-    out_str += str(datetime.now()) + " running collectstatic<br>"
+    out_str += str(datetime.now()) + " running collectstatic\n"
     django.core.management.execute_from_command_line(['manage.py', 'collectstatic', '--noinput'])
-    out_str += str(datetime.now()) + " collectstatic finished<br>"
+    out_str += str(datetime.now()) + " collectstatic finished\n"
     return out_str
 
 
 @basicauth
 def createsuperuser_view(request):
-    return HttpResponse(createsuperuser())
+    return HttpResponse(createsuperuser(), content_type="text/plain")
 
 
 def createsuperuser():
     out_str = ""
 
-    out_str += str(datetime.now()) + " running createsuperuser<br>"
+    out_str += str(datetime.now()) + " running createsuperuser\n"
 
     user, _ = User.objects.get_or_create(username=os.getenv('DJANGO_SUPERUSER_USERNAME'))
     user.email = os.getenv('DJANGO_SUPERUSER_EMAIL')
@@ -87,6 +87,6 @@ def createsuperuser():
     user.is_staff = True
     user.password = os.getenv('DJANGO_SUPERUSER_PASSWORD_HASH')
     user.save()
-    out_str += str(datetime.now()) + " superuser created or updated<br>"
+    out_str += str(datetime.now()) + " superuser created or updated\n"
 
     return out_str
