@@ -35,7 +35,7 @@ jobs:
     #     path: frontend/dist
 
     # deploy to server
-    - name: copy file via ssh password
+    - name: Copy files to server
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_ADDRESS }}
@@ -46,7 +46,7 @@ jobs:
         target: ${{ secrets.SERVER_PATH }}
         overwrite: 1
         
-    - name: Migrate
+    - name: Invoke scripts
       run: |
         curl -f -u "${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }}" https://ticketswatcher.forelleh.de/management/migrate
         curl -f -u "${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }}" https://ticketswatcher.forelleh.de/management/collectstatic
