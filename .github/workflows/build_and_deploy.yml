@@ -48,6 +48,6 @@ jobs:
         
     - name: Migrate
       run: |
-        curl -u ${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }} https://ticketswatcher.forelleh.de/management/migrate
-        curl -u ${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }} https://ticketswatcher.forelleh.de/management/collectstatic
-        curl -u ${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }} https://ticketswatcher.forelleh.de/management/createsuperuser
+        curl -f -u "${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }}" https://ticketswatcher.forelleh.de/management/migrate
+        curl -f -u "${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }}" https://ticketswatcher.forelleh.de/management/collectstatic
+        curl -f -u "${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }}" https://ticketswatcher.forelleh.de/management/createsuperuser
