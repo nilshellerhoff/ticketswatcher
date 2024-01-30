@@ -21,20 +21,24 @@
   ></v-select>
 
   <v-switch
-    v-model="showOnlyFree"
-    color="primary"
-    label="Show only concerts with tickets available"
-    @update:model-value="filterConcertsDebounced"
+      v-model="showOnlyFree"
+      color="primary"
+      label="Show only concerts with tickets available"
+      @update:model-value="filterConcertsDebounced"
   ></v-switch>
 
   <!-- concert list -->
-  <ol id="concertList" class="list-group list-group-numbered">
-    <concert-list-concert
-        @click="openConcert(concert)"
-        v-for="concert in concertsFiltered"
-        :concert="concert"
-        :key="concert.pk">
-    </concert-list-concert>
+  <ol id="concertList"
+      class="list-group list-group-numbered">
+    <span v-for="concert in concerts"
+          :key="concert.pk"
+    >
+      <concert-list-concert
+          @click="openConcert(concert)"
+          :concert="concert"
+          :style="{display: concertsFiltered.includes(concert) ? 'block' : 'none'}"
+      ></concert-list-concert>
+    </span>
   </ol>
 
   <dialog-concert

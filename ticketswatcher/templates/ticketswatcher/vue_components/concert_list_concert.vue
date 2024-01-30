@@ -1,6 +1,12 @@
 <template id="templateConcertListConcert">
   <span>
-    <li class="list-group-item d-flex justify-content-between align-items-start">
+    <li class="list-group-item d-flex justify-content-between align-items-start" style="cursor: pointer">
+      <div :style="{height: `${imageWidth}px`, width: `${imageWidth}px`, flexShrink: 0, margin: 'auto 0'}">
+        <img :style="{objectFit: 'cover', width: '100%', height: '100%', borderRadius: '5px'}"
+             :src="concert.fields.image || '/static/img/placeholder.png'"
+             loading="lazy"
+        />
+      </div>
       <div class="ms-2 me-auto">
         [[ concert.fields.provider_title ]]
         <div class="fw-bold">[[ concert.fields.title ]]</div>
@@ -21,6 +27,9 @@ const concertListConcert = {
   delimiters: ['[[', ']]'],
   template: '#templateConcertListConcert',
   props: ['concert'],
+  data: () => ({
+    imageWidth: window.innerWidth > 600 ? 80 : 60,
+  }),
   computed: {
     availablePill() {
       const avail = this.concert.fields.available_tickets
