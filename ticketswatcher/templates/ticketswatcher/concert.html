@@ -82,6 +82,9 @@
                    prepend-icon="mdi-ticket-outline">Buy ticket
             </v-btn>
         {% endif %}
+      <br><br>
+      <small class="my-12">Tickets updated {{ concert.last_ticket_updated }}</small>
+
         {% if tickets %}
             <table class="table">
                 <thead>
@@ -108,7 +111,7 @@
                 </tbody>
             </table>
         {% else %}
-            <br><br>
+            <br>
             <h4>
                 No tickets available
             </h4>

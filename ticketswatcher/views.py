@@ -56,9 +56,9 @@ def concert(request, concert_id):
         except:
             watcher_status = "error"
 
+    actions.load_tickets(concert_id)
     concert = get_object_or_404(Concert, pk=concert_id)
 
-    actions.load_tickets(concert_id)
     tickets = Ticket.objects.filter(concert_id=concert_id).order_by('sort', '-price')
     ticket_reduction_types = Ticket.objects.filter(concert_id=concert_id).values('reduction_type__name',
                                                                                  'reduction_type__id').distinct()

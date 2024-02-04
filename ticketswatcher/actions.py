@@ -14,22 +14,26 @@ def loadConcerts():
     concerts = shopsWrapper.getConcerts()
 
     for concert in concerts:
-        Concert.objects.update_or_create(
-            **{
-                'title': concert['title'],
-                'datestr': concert['datestr'],
-                'datetime': concert['datetime'],
-            }, defaults={
-                'details': concert.get('details'),
-                'provider': concert['provider'],
-                'datetime': concert['datetime'],
-                'ticketID': concert['ticketID'],
-                'image': concert['image'],
-                'url': concert['url'],
-                'ticket_url': concert['ticket_url'],
-                'venue': concert['venue'],
-            }
-        )
+        try:
+            Concert.objects.update_or_create(
+                **{
+                    'title': concert['title'],
+                    'datestr': concert['datestr'],
+                    'datetime': concert['datetime'],
+                }, defaults={
+                    'details': concert.get('details'),
+                    'provider': concert['provider'],
+                    'datetime': concert['datetime'],
+                    'ticketID': concert['ticketID'],
+                    'image': concert['image'],
+                    'url': concert['url'],
+                    'ticket_url': concert['ticket_url'],
+                    'venue': concert['venue'],
+                    'last_updated': datetime.now(),
+                }
+            )
+        except Exception as e:
+            print(f"Error updating concert {concert['title']}: {str(e)}")
 
     return len(concerts)
 
@@ -82,6 +86,10 @@ def load_tickets(concert_id: int):
                         'reduction_type': TicketReductionType.objects.get(name=ticket['name']),
                     }
                 )
+
+        # finally update concert last ticket update field
+        concert.last_ticket_updated = datetime.now()
+        concert.save()
 
         return len(tickets)
     except Exception as e:
