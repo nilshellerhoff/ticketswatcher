@@ -117,10 +117,22 @@ def parse_spielplan_page(url):
 
         category = try_get_text(concert, '.activity-list__col--genre').strip()
 
+        details_raw = try_get_text(concert, '.activity-list--toggle__content')
+        if details_raw:
+            details_lines = try_get_text(concert, '.activity-list--toggle__content').split("\n")
+            details_stripped = [line.strip() for line in details_lines if line.strip()]
+            details = "\n".join(details_stripped)
+
+            # apply some specific tweaks
+            details = re.sub(r"Preise\n([A-Z])\n,", r"Preise \1,", details)
+            details = re.sub(r"€\n([\-0-9]+)", r"€ \1", details)
+        else:
+            details = None
+
         concerts.append({
             'provider': 'staatsoper',
             'title': title.strip(),
-            'details': try_get_text(concert, '.activity-list--toggle__content'),
+            'details': details,
             'category': category,
             'datestr': '',
             'datetime': date_time,
