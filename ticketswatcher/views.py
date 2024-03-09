@@ -7,7 +7,7 @@ from django.urls import reverse
 from .constants import PROVIDERS
 from .models import Concert, Ticket, TicketReductionType, Watcher
 
-from . import actions
+from . import actions, settings
 
 from datetime import datetime, timedelta
 
@@ -141,7 +141,8 @@ def checkWatchers(request):
 def sendTestEmail(request):
     email = request.GET.get("email") or "nils.hellerhoff@gmail.com"
     actions.sendTestEmail(recipient=email)
-    return HttpResponse("Sent test mail")
+    backend = settings.EMAIL_BACKEND
+    return HttpResponse(f"Sent test mail through backend {backend}")
 
 
 def deleteWatcher(request, uuid):
