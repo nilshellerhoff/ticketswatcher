@@ -12,6 +12,7 @@ class Concert(models.Model):
     url = models.CharField(max_length=200, null=True)
     ticket_url = models.CharField(max_length=200, null=True)
     venue = models.CharField(max_length=200, null=True)
+    last_found = models.BooleanField(null=True)
     last_updated = models.DateTimeField(null=True)
     last_ticket_updated = models.DateTimeField(null=True)
 

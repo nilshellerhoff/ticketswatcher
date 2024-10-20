@@ -12,6 +12,7 @@ FROM_EMAIL: str = 'ticketswatcher@forelleh.de'
 def loadConcerts():
     """Load concerts from the website into the DB"""
     concerts = shopsWrapper.getConcerts()
+    Concert.objects.update(last_found=False)
 
     for concert in concerts:
         try:
@@ -30,6 +31,7 @@ def loadConcerts():
                     'ticket_url': concert['ticket_url'],
                     'venue': concert['venue'],
                     'last_updated': datetime.now(),
+                    'last_found': True,
                 }
             )
         except Exception as e:

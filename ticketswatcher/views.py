@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -17,7 +18,7 @@ from django.core import serializers
 
 
 def index(request):
-    concerts = Concert.objects.filter(datetime__gte=datetime.date(datetime.now())).order_by('datetime')
+    concerts = Concert.objects.filter(~Q(last_found=False), datetime__gte=datetime.date(datetime.now())).order_by('datetime')
     concerts_json = serializers.serialize("json", concerts)
 
     # adding ticket info (yes this is stupid)
