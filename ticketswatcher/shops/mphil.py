@@ -35,7 +35,7 @@ def _parsePage(soup: BeautifulSoup) -> list:
         c = {}
 
         c['provider'] = 'mphil'
-        c['title'] = oneline(concert.select_one('h2.m-mphil-concertlist__headline').text)
+        c['title'] = oneline(concert.select_one('h3.m-mphil-concertlist__headline').text)
         c['datestr'] = concert.select_one('time.m-mphil-concertlist__date').text.strip()
 
         datetime_iso = concert.select_one('time.m-mphil-concertlist__date')["datetime"]

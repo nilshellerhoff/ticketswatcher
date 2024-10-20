@@ -5,7 +5,7 @@ ENABLED_SHOPS = [
     "mphil",
     "brso",
     "brticket",
-    "staatsoper",
+    # "staatsoper",
 ]
 
 def getConcerts():
@@ -17,10 +17,15 @@ def getConcerts():
     return concerts
 
 
-def load_concerts(shopname):
-    print(f"loading concerts for {shopname}")
-    concerts = eval(f"{shopname}.getConcerts()")
-    print(f"{len(concerts)} concerts loaded")
+def load_concerts(shopname: str):
+    try:
+        print(f"loading concerts for {shopname}")
+        concerts = eval(f"{shopname}.getConcerts()")
+        print(f"{len(concerts)} concerts loaded")
+    except Exception as e:
+        print(f"failed to load concerts for {shopname}, {str(e)}")
+        return []
+
     return concerts
 
 def getConcertsBrticket():
