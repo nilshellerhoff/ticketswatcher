@@ -27,19 +27,47 @@
       @update:model-value="filterConcertsDebounced"
   ></v-switch>
 
+  <v-btn-toggle
+      v-model="displayMode"
+      divided
+  >
+    <v-btn icon="mdi-view-grid"></v-btn>
+    <v-btn icon="mdi-view-list"></v-btn>
+  </v-btn-toggle>
+
   <!-- concert list -->
-  <ol id="concertList"
-      class="list-group list-group-numbered">
-    <span v-for="concert in concerts"
-          :key="concert.pk"
-    >
-      <concert-list-concert
-          @click="openConcert(concert)"
-          :concert="concert"
-          :style="{display: concertsFiltered.includes(concert) ? 'block' : 'none'}"
-      ></concert-list-concert>
-    </span>
-  </ol>
+  <span v-if="displayMode === 1">
+    <ol id="concertList"
+        class="list-group list-group-numbered">
+      <span v-for="concert in concerts"
+            :key="concert.pk"
+      >
+        <concert-list-concert
+            @click="openConcert(concert)"
+            :concert="concert"
+            :style="{display: concertsFiltered.includes(concert) ? 'block' : 'none'}"
+        ></concert-list-concert>
+      </span>
+    </ol>
+  </span>
+
+  <span v-else>
+    <v-container fluid>
+      <v-row dense>
+        <v-col
+            v-for="concert in concerts"
+            :key="concert.pk"
+            :cols="gridColumnWidth"
+        >
+          <concert-list-concert-card
+              @click="openConcert(concert)"
+              :concert="concert"
+              :providers="providers"
+          ></concert-list-concert-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </span>
 
   <dialog-concert
       :show="showConcertDialog"
@@ -62,7 +90,15 @@ const concertList = {
     dialogConcertTitle: "",
     showConcertDialog: false,
     showOnlyFree: false,
+    displayMode: 0,
   }),
+  computed: {
+    gridColumnWidth() {
+      if (window.innerWidth >= 1000) return 4
+      if (window.innerWidth >= 700) return 6
+      else return 12
+    }
+  },
   methods: {
     filterConcerts() {
       let concertsFiltered = this.concerts;
