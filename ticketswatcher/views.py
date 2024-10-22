@@ -83,8 +83,13 @@ def watch(request, concert_id):
 
     watcher.concert = concert
 
-    ticket_reduction_types = request.POST.get("ticket_reduction_types").split(", ")
-    ticket_reduction_types = [int(t) for t in ticket_reduction_types if t.isnumeric()]
+    ticket_reduction_data = request.POST.get("ticket_reduction_types")
+
+    if ticket_reduction_data:
+        ticket_reduction_types_str = ticket_reduction_data.split(", ")
+        ticket_reduction_types = [int(t) for t in ticket_reduction_types_str if t.isnumeric()]
+    else:
+        ticket_reduction_types = []
 
     watcher.email = request.POST.get("email")
     watcher.max_price = request.POST.get("max_price") or -1
