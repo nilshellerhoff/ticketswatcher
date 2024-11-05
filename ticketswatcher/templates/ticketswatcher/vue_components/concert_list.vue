@@ -58,6 +58,7 @@
             v-for="concert in concerts"
             :key="concert.pk"
             :cols="gridColumnWidth"
+            :style="{display: concertsFiltered.includes(concert) ? 'block' : 'none'}"
         >
           <concert-list-concert-card
               @click="openConcert(concert)"
