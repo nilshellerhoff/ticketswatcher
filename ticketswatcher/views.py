@@ -140,6 +140,7 @@ def loadTickets(request, concert_id):
 
 
 def checkWatchers(request):
+    actions.loadConcerts()
     actions.check_watchers()
     return HttpResponse("Checked watchers")
 
