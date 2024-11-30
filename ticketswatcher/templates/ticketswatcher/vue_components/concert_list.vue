@@ -102,6 +102,7 @@ const concertList = {
   },
   methods: {
     filterConcerts() {
+      console.log("filtering concerts")
       let concertsFiltered = this.concerts;
       // filter by free
       if (this.showOnlyFree) {
@@ -112,7 +113,7 @@ const concertList = {
 
       concertsFiltered = concertsFiltered.filter((concert) => {
         const searchableString = concert.fields.title.toLowerCase() + concert.fields.details?.toLowerCase()
-        const inSearch = searchableString.includes(this.searchQuery ?? '');
+        const inSearch = searchableString.includes(this.searchQuery.toLowerCase() ?? '');
 
         const inProvider = this.selectedProviderNames.includes(concert.fields.provider);
         return inSearch && inProvider;
